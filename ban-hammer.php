@@ -3,12 +3,12 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: This plugin prevent people from registering with any email you list.
-Version: 2.1
+Version: 2.2
 Author: Mika Epstein
 Author URI: http://www.ipstenu.org/
 Network: true
 
-Copyright 2009-11 Mika Epstein (email: ipstenu@ipstenu.org)
+Copyright 2009-13 Mika Epstein (email: ipstenu@ipstenu.org)
 
     This file is part of Ban Hammer, a plugin for WordPress.
 
@@ -29,8 +29,8 @@ Copyright 2009-11 Mika Epstein (email: ipstenu@ipstenu.org)
 
 // First we check to make sure you meet the requirements
 global $wp_version;
-$exit_msg_ver = 'Sorry, but this plugin is no longer supported on pre-3.0 WordPress installs.';
-if (version_compare($wp_version,"2.9","<")) { exit($exit_msg_ver); }
+$exit_msg_ver = 'Sorry, but this plugin is no longer supported on pre-3.4 WordPress installs.';
+if (version_compare($wp_version,"3.4","<")) { exit($exit_msg_ver); }
 
 // Quick BuddyPress Check
 if (defined('BP_PLUGIN_DIR'))
@@ -39,7 +39,8 @@ else
 	DEFINE('banhammer_buddypress',0);
 
 // Languages
-load_plugin_textdomain('banhammer', false, basename( dirname( __FILE__ ) ) . '/languages' );
+if ( !defined('banhammer')) {define('banhammer','banhammer');} // Translation
+load_plugin_textdomain('banhammer', false, basename( dirname( __FILE__ ) ) . '/languages', 'languages' );
 
 // Here's the basic plugin for WordPress SANS BuddyPress
 function banhammer($user_login, $user_email, $errors) {
@@ -266,7 +267,7 @@ if( is_multisite() ) {
         
         <fieldset class="options">
         <legend><h3><?php _e('Blacklisted Emails', banhammer); ?></h3></legend>
-        <p><?php _e('The emails and domains added below will not be allowed to be used during registration.', banhammer); ?></p>
+        <p><?php _e('The emails and domains added below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), but not partials past that.', banhammer); ?></p>
         
         <textarea name="blacklist_keys" cols="40" rows="15"><?php
                 echo $banhammer_blacklist;
