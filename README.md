@@ -7,7 +7,7 @@
   
 **Tested up to:** 3.5
   
-**Stable tag:** 2.1
+**Stable tag:** 2.2
   
 **Donate Link:** https://www.wepay.com/donations/halfelf-wp
   
@@ -53,54 +53,45 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ##Changelog##
 
+### 2.2 ###
+* 15 January, 2013 by Ipstenu
+* Fixed translation bug
+* Dropping support for older versions
 
 ### 2.1 ###
 * 26 August, 2012 by Ipstenu
-
 * The return of Multisite
+* BuddyPress improvements
+* Dropping support for older versions
 
 
 
 ### 2.0 ###
 * 30 May, 2012 by Ipstenu
-
 * Removal of Stop Forum Spam.
-
 * Whole plugin was consolidated to run faster, with fewer files, and with contextual help. Egad, I've learned a lot since 2009!
 
 
 
 ### 1.7 ###
 * 24 April, 2012 by Ipstenu
-
 * Proper uninstallation.
-
-
 
 ### 1.6.1 ###
 * 17 April, 2012 by Ipstenu
-
 * Cleanup. Nothing major here, just documentation and all.
-
-
 
 ### 1.6 ###
 * 05 August, 2011 by Ipstenu
-
 * Internationalization.
-
-
 
 ### 1.5.2 ###
 * 09 March, 2011 by Ipstenu
-
 * Bugfix.  Typo made it NOT enableable.
-
 
 
 ### 1.5 ###
 * 08 March, 2011 by Ipstenu
-
 * Allows for deletion of spammers from the User List (credit mario_7)
 
 * Added optional functionality to show spammer status on the normal users list.
