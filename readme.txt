@@ -1,9 +1,9 @@
 === Ban Hammer ===
 Contributors: Ipstenu
-Tags: email, ban, registration, buddypress
-Requires at least: 3.0
+Tags: email, ban, registration, buddypress, wpmu, multisite
+Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.0
+Stable tag: 2.2
 Donate Link: https://www.wepay.com/donations/halfelf-wp
 License: GPLv2
 
@@ -28,10 +28,16 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ==Changelog==
 
+= 2.2 =
+* 15 January, 2013 by Ipstenu
+* Fixed translation bug
+* Dropping support for older versions
+
 = 2.1 =
 * 26 August, 2012 by Ipstenu
 * The return of Multisite
 * BuddyPress improvements
+* Dropping support for older versions
 
 = 2.0 =
 * 30 May, 2012 by Ipstenu
@@ -138,13 +144,16 @@ This plugin no longer uses Stop Forum Spam. If you need that feature, please use
 
 = Does this work on MultiSite? =
 
-Surprise! Yes! If you're using multisite, instead of pulling from the blacklist, you have a separate list off Network Admin -> Settings.
+Surprise! Yes! If you're using multisite, instead of pulling from the comment blacklist (which is per site), you have a separate list off Network Admin -> Settings. This is because you only want to have the network admins determining who can register on the network.
 
 = Does this work on BuddyPress? =
 
 Yes. Caveat: I have not fully tested with Multisite and BuddyPress, so I want to warn you that it doesn't always give the pretty error message. It does ban hammer them, though, so ... yay?
 
+= Can I block partials? =
+
+You can block by domain by entering @example.com, but you cannot block all .com emails. This is because of the crossover between the Blacklist and the Ban List. Say, for example, you want to block the word cookie from being said in comments. If you did that, Ban Hammer would block cookiemonster@sesamestreet.org too!
+
 = Why doesn't this work AT ALL on my site!? =
 
 I'm not sure. I've gotten a handful of reports from people where it's not working, and for the life of me, I'm stumped. So far, it looks like Zend and/or eAccelerator aren't agreeing with this. If it's failing, please post on the wp.org forums with your server specs (PHP info, server type, etc) and any plugins you're running.
-
