@@ -3,7 +3,11 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: This plugin prevent people from registering with any email you list.
+<<<<<<< HEAD
+Version: 2.2
+=======
 Version: 2.3
+>>>>>>> cedeba22d3a76e6aa7e93b1de8cc3d2b34982bae
 Author: Mika Epstein
 Author URI: http://www.ipstenu.org/
 Network: true
