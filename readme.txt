@@ -117,7 +117,7 @@ Fixes problem with enabling NOT working at all. *sigh*
 <strong>Single Install</strong>
 After installation, go to **Tools > Ban Hammer** to customize the error message (and banned emails, but it's the same list from your comment moderation so...).
 
-<strong>Multisite</strong?
+<strong>Multisite</strong>
 After installation, go to **Network Admin > Settings > Ban Hammer** to customize the error message and banned email list. This will ban users network wide.
 
 == Screenshots ==
