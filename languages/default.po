@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BanHammer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-15 15:12-0800\n"
-"PO-Revision-Date: 2013-01-15 15:13-0800\n"
+"POT-Creation-Date: 2013-10-29 11:16-0800\n"
+"PO-Revision-Date: 2013-10-29 11:17-0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -11,20 +11,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;_e;__\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.5\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
-#: ../ban-hammer.php:174 ../ban-hammer.php:178 ../ban-hammer.php:192
-#: ../ban-hammer.php:216
+#: ../ban-hammer.php:186 ../ban-hammer.php:190 ../ban-hammer.php:204
+#: ../ban-hammer.php:228
 msgid "Ban Hammer"
 msgstr ""
 
-#: ../ban-hammer.php:190
+#: ../ban-hammer.php:202
 msgid "Readme"
 msgstr ""
 
-#: ../ban-hammer.php:193
+#: ../ban-hammer.php:205
 msgid ""
 "We've all had this problem.  A group of spammers from mail.ru are "
 "registering to your blog, but you want to keep registration open.  How do "
@@ -33,12 +33,12 @@ msgid ""
 "eggs, you have to escalate."
 msgstr ""
 
-#: ../ban-hammer.php:194
+#: ../ban-hammer.php:206
 msgid ""
 "Ban Hammer does that for you, preventing unwanted users from registering."
 msgstr ""
 
-#: ../ban-hammer.php:195
+#: ../ban-hammer.php:207
 msgid ""
 "On a single install of WP, instead of using its own database table, Ban "
 "Hammer pulls from your list of blacklisted emails from the Comment Blacklist "
@@ -50,48 +50,48 @@ msgid ""
 "they cannot register."
 msgstr ""
 
-#: ../ban-hammer.php:196
+#: ../ban-hammer.php:208
 msgid "Limited free support can be found in the WordPress forums."
 msgstr ""
 
-#: ../ban-hammer.php:198
+#: ../ban-hammer.php:210
 msgid "Support Forums"
 msgstr ""
 
-#: ../ban-hammer.php:199
+#: ../ban-hammer.php:211
 msgid "Plugin Site"
 msgstr ""
 
-#: ../ban-hammer.php:200
+#: ../ban-hammer.php:212
 msgid "Donate"
 msgstr ""
 
-#: ../ban-hammer.php:245
+#: ../ban-hammer.php:257
 msgid "Options Updated!"
 msgstr ""
 
-#: ../ban-hammer.php:262
+#: ../ban-hammer.php:274
 msgid "Personalize the Message"
 msgstr ""
 
-#: ../ban-hammer.php:263
+#: ../ban-hammer.php:275
 msgid ""
 "The message below is displayed to users who are not allowed to register on "
 "your blog. Edit is as you see fit, but remember you don't get a lot of space "
 "so keep it simple."
 msgstr ""
 
-#: ../ban-hammer.php:269
+#: ../ban-hammer.php:281
 msgid "Blacklisted Emails"
 msgstr ""
 
-#: ../ban-hammer.php:270
+#: ../ban-hammer.php:282
 msgid ""
 "The emails and domains added below will not be allowed to be used during "
 "registration. You can add in full emails (i.e. foo@example.com) or domains "
 "(i.e. @domain.com), but not partials past that."
 msgstr ""
 
-#: ../ban-hammer.php:276
+#: ../ban-hammer.php:288
 msgid "Update Options"
 msgstr ""

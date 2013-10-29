@@ -2,8 +2,8 @@
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 3.4
-Tested up to: 3.5
-Stable tag: 2.2
+Tested up to: 3.7
+Stable tag: 2.3
 Donate Link: https://www.wepay.com/donations/halfelf-wp
 License: GPLv2
 
@@ -27,6 +27,11 @@ Ban Hammer is a very weird fork of [Philippe Paquet's No Disposable Email plugin
 Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for StopForumSpam integration. MASSIVE credit to Travis Hamera for the StopForumSpam/cURL fix! And then props to Helen Hou-Sandi for not using curl at all. Protip? Use <a href="http://planetozh.com/blog/2009/08/how-to-make-http-requests-with-wordpress/">WP_http</a> instead!
 
 ==Changelog==
+
+= 2.3 =
+* 29 October, 2013 by Ipstenu
+* Languages for 3.7
+* Compat for 3.7
 
 = 2.2 =
 * 15 January, 2013 by Ipstenu
@@ -151,13 +156,6 @@ Surprise! Yes! If you're using multisite, instead of pulling from the comment bl
 Yes. Caveat: I have not fully tested with Multisite and BuddyPress, so I want to warn you that it doesn't always give the pretty error message. It does ban hammer them, though, so ... yay?
 
 = Can I block partials? =
-<<<<<<< HEAD
-
-You can block by domain by entering @example.com, but you cannot block all .com emails.
-
-= Why doesn't this work AT ALL on my site!? =
-=======
->>>>>>> cedeba22d3a76e6aa7e93b1de8cc3d2b34982bae
 
 You can block by domain by entering @example.com, but you cannot block all .com emails. This is because of the crossover between the Blacklist and the Ban List. Say, for example, you want to block the word cookie from being said in comments. If you did that, Ban Hammer would block cookiemonster@sesamestreet.org too!
 
