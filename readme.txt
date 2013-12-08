@@ -2,13 +2,8 @@
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 3.4
-<<<<<<< HEAD
-Tested up to: 3.6
-Stable tag: 2.2
-=======
 Tested up to: 3.7
 Stable tag: 2.3
->>>>>>> 6d9098026d284ea745f3f5ad39169d0669d572b2
 Donate Link: https://www.wepay.com/donations/halfelf-wp
 License: GPLv2
 
