@@ -159,7 +159,7 @@ register_activation_hook( __FILE__, 'banhammer_activate' );
 add_filter('plugin_row_meta', 'banhammer_donate_link', 10, 2);
 function banhammer_donate_link($links, $file) {
         if ($file == plugin_basename(__FILE__)) {
-                $donate_link = '<a href="https://www.wepay.com/donations/halfelf-wp">Donate</a>';
+                $donate_link = '<a href="https://store.halfelf.org/donate/">Donate</a>';
                 $links[] = $donate_link;
         }
         return $links;
@@ -208,7 +208,7 @@ function banhammer_plugin_help() {
 		'<ul>'.
 			'<li><a href="http://wordpress.org/support/plugin/ban-hammer">'. __( 'Support Forums','banhammer').'</a></li>'.
 			'<li><a href="http://halfelf.org/my-plugins/ban-hammer/">'. __( 'Plugin Site','banhammer').'</a></li>'.
-			'<li><a href="https://www.wepay.com/donations/halfelf-wp">'. __( 'Donate','banhammer').'</a></li>'.
+			'<li><a href="https://store.halfelf.org/donate/">'. __( 'Donate','banhammer').'</a></li>'.
 		'</ul>'
 	));
 
