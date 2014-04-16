@@ -9,7 +9,7 @@
   
 **Stable tag:** 2.2
   
-**Donate Link:** https://www.wepay.com/donations/halfelf-wp
+**Donate Link:** https://store.halfelf.org/donate/
   
 **License:** GPLv2
   
@@ -38,7 +38,7 @@ Ban Hammer <em>no longer</em> uses Stop Forum Spam. <a href="http://wordpress.or
 
 
 
-* [Donate](https://www.wepay.com/donations/halfelf-wp)
+* [Donate](https://store.halfelf.org/donate/)
 
 
 

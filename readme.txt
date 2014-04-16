@@ -4,7 +4,7 @@ Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 3.4
 Tested up to: 3.8
 Stable tag: 2.3
-Donate Link: https://www.wepay.com/donations/halfelf-wp
+Donate Link: https://store.halfelf.org/donate/
 License: GPLv2
 
 Prevent people from registering via your comment moderation blacklist.
@@ -19,7 +19,7 @@ On a single install of WP, instead of using its own database table, Ban Hammer p
 
 Ban Hammer <em>no longer</em> uses Stop Forum Spam. <a href="http://wordpress.org/extend/plugins/stop-spammer-registrations-plugin/">Stop Spammer Registrations</a> did it so much better, I bow to their genius.
 
-* [Donate](https://www.wepay.com/donations/halfelf-wp)
+* [Donate](https://store.halfelf.org/donate/)
 
 = Credits =
 Ban Hammer is a very weird fork of [Philippe Paquet's No Disposable Email plugin](http://www.joeswebtools.com/wordpress-plugins/no-disposable-email/). The original plugin was a straight forward .dat file that listed all the bad emails (generally ones like mailinator that are disposable) and while Ban Hammer doesn't do that, this would not have been possible without that which was done before.
