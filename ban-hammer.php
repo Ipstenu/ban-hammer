@@ -3,14 +3,14 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: This plugin prevent people from registering with any email you list.
-Version: 2.3
+Version: 2.4
 Author: Mika Epstein
-Author URI: http://www.ipstenu.org/
+Author URI: http://halfelf.org/
 Network: true
 Text Domain: ban-hammer
 Domain Path: /languages
 
-Copyright 2009-13 Mika Epstein (email: ipstenu@ipstenu.org)
+Copyright 2009-14 Mika Epstein (email: ipstenu@halfelf.org)
 
     This file is part of Ban Hammer, a plugin for WordPress.
 
@@ -159,7 +159,7 @@ register_activation_hook( __FILE__, 'banhammer_activate' );
 add_filter('plugin_row_meta', 'banhammer_donate_link', 10, 2);
 function banhammer_donate_link($links, $file) {
         if ($file == plugin_basename(__FILE__)) {
-                $donate_link = '<a href="https://store.halfelf.org/donate/">Donate</a>';
+                $donate_link = '<a href="https://store.halfelf.org/donate/">'.__("Donate", "ban-hammer").'</a>';
                 $links[] = $donate_link;
         }
         return $links;
@@ -169,7 +169,7 @@ function banhammer_donate_link($links, $file) {
 $plugin = plugin_basename(__FILE__);
 add_filter("plugin_action_links_$plugin", 'banhammer_settings_link' );
 function banhammer_settings_link($links) { 
-    $settings_link = '<a href="options-discussion.php">Settings</a>'; 
+    $settings_link = '<a href="options-discussion.php">'.__("Settings", "ban-hammer").'</a>'; 
     array_unshift($links, $settings_link); 
     return $links; 
 }
@@ -182,11 +182,11 @@ if( is_multisite() ) {
     
     function banhammer_admin_add_page() {
 	   global $ippy_banhammer_options_page;
-	   $ippy_banhammer_options_page = add_submenu_page('settings.php', __('Ban Hammer', 'banhammer'), __('Ban Hammer', 'banhammer'), 'manage_networks', 'banhammer', 'banhammer_options');
+	   $ippy_banhammer_options_page = add_submenu_page('settings.php', __('Ban Hammer', 'ban-hammer'), __('Ban Hammer', 'ban-hammer'), 'manage_networks', 'ban-hammer', 'banhammer_options');
 	   }
 } else {
     function banhammer_optionsmenu() {
-    add_submenu_page('tools.php', __('Ban Hammer', 'banhammer'), __('Ban Hammer', 'banhammer'), 'moderate_comments', 'banhammer', 'banhammer_options');
+    add_submenu_page('tools.php', __('Ban Hammer', 'ban-hammer'), __('Ban Hammer', 'ban-hammer'), 'moderate_comments', 'ban-hammer', 'banhammer_options');
     }
   
 }
@@ -198,17 +198,17 @@ function banhammer_plugin_help() {
 		
 	$screen->add_help_tab( array(
 		'id'      => 'ippy-banhammer-base',
-		'title'   => __('Readme', 'banhammer'),
+		'title'   => __('Readme', 'ban-hammer'),
 		'content' => 
-		'<h3>' . __('Ban Hammer', 'banhammer') .'</h3>' .
-		'<p>' . __( 'We\'ve all had this problem.  A group of spammers from mail.ru are registering to your blog, but you want to keep registration open.  How do you kill the spammers without bothering your clientele?  While you could edit your functions.php and block the domain, once you get past a few bad eggs, you have to escalate.', 'banhammer' ) . '</p>' . 
-		'<p>' . __( 'Ban Hammer does that for you, preventing unwanted users from registering.', 'banhammer' ) . '</p>' . 
-		'<p>' . __( 'On a single install of WP, instead of using its own database table, Ban Hammer pulls from your list of blacklisted emails from the Comment Blacklist feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them. On a network instance, there\'s a network wide setting for banned emails and domains. This means you only have <em>one</em> place to update and maintain your blacklist.  When a blacklisted user attempts to register, they get a customizable message that they cannot register.', 'banhammer' ) . '</p>' .
-		'<p>' . __( 'Limited free support can be found in the WordPress forums.','banhammer').'</p>'.
+		'<h3>' . __('Ban Hammer', 'ban-hammer') .'</h3>' .
+		'<p>' . __( 'We\'ve all had this problem.  A group of spammers from mail.ru are registering to your blog, but you want to keep registration open.  How do you kill the spammers without bothering your clientele?  While you could edit your functions.php and block the domain, once you get past a few bad eggs, you have to escalate.', 'ban-hammer' ) . '</p>' . 
+		'<p>' . __( 'Ban Hammer does that for you, preventing unwanted users from registering.', 'ban-hammer' ) . '</p>' . 
+		'<p>' . __( 'On a single install of WP, instead of using its own database table, Ban Hammer pulls from your list of blacklisted emails from the Comment Blacklist feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them. On a network instance, there\'s a network wide setting for banned emails and domains. This means you only have <em>one</em> place to update and maintain your blacklist.  When a blacklisted user attempts to register, they get a customizable message that they cannot register.', 'ban-hammer' ) . '</p>' .
+		'<p>' . __( 'Limited free support can be found in the WordPress forums.','ban-hammer').'</p>'.
 		'<ul>'.
-			'<li><a href="http://wordpress.org/support/plugin/ban-hammer">'. __( 'Support Forums','banhammer').'</a></li>'.
-			'<li><a href="http://halfelf.org/my-plugins/ban-hammer/">'. __( 'Plugin Site','banhammer').'</a></li>'.
-			'<li><a href="https://store.halfelf.org/donate/">'. __( 'Donate','banhammer').'</a></li>'.
+			'<li><a href="http://wordpress.org/support/plugin/ban-hammer">'. __( 'Support Forums','ban-hammer').'</a></li>'.
+			'<li><a href="http://halfelf.org/my-plugins/ban-hammer/">'. __( 'Plugin Site','ban-hammer').'</a></li>'.
+			'<li><a href="https://store.halfelf.org/donate/">'. __( 'Donate','ban-hammer').'</a></li>'.
 		'</ul>'
 	));
 
@@ -224,7 +224,7 @@ function banhammer_options() {
         <div class="wrap">
         
         <div id="icon-edit-comments" class="icon32"></div>
-        <h2><?php _e("Ban Hammer", 'banhammer'); ?></h2>
+        <h2><?php _e("Ban Hammer", 'ban-hammer'); ?></h2>
         
         <?php
         
@@ -253,7 +253,7 @@ function banhammer_options() {
                         }
                     }
         ?>
-                <div id="message" class="updated fade"><p><strong><?php _e('Options Updated!', 'banhammer'); ?></strong></p></div>
+                <div id="message" class="updated fade"><p><strong><?php _e('Options Updated!', 'ban-hammer'); ?></strong></p></div>
 
 <?php   } 
     
@@ -270,21 +270,21 @@ if( is_multisite() ) {
         <form method="post" width='1'>
         
         <fieldset class="options">
-        <legend><h3><?php _e('Personalize the Message', banhammer); ?></h3></legend>
-        <p><?php _e('The message below is displayed to users who are not allowed to register on your blog. Edit is as you see fit, but remember you don\'t get a lot of space so keep it simple.', banhammer); ?></p>
+        <legend><h3><?php _e('Personalize the Message', 'ban-hammer'); ?></h3></legend>
+        <p><?php _e('The message below is displayed to users who are not allowed to register on your blog. Edit is as you see fit, but remember you don\'t get a lot of space so keep it simple.', 'ban-hammer'); ?></p>
         
         <textarea name='banhammer_newmess' cols='80' rows='2'><?php echo $banhammer_blackmess; ?></textarea>
         </fieldset>
         
         <fieldset class="options">
-        <legend><h3><?php _e('Blacklisted Emails', banhammer); ?></h3></legend>
-        <p><?php _e('The emails and domains added below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), but not partials past that.', banhammer); ?></p>
+        <legend><h3><?php _e('Blacklisted Emails', 'ban-hammer'); ?></h3></legend>
+        <p><?php _e('The emails and domains added below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), but not partials past that.', 'ban-hammer'); ?></p>
         
         <textarea name="blacklist_keys" cols="40" rows="15"><?php
                 echo $banhammer_blacklist;
         ?></textarea>
         </fieldset>
-                <p class="submit"><input class='button-primary' type='submit' name='update' value='<?php _e("Update Options", 'banhammer'); ?>' id='submitbutton' /></p>
+                <p class="submit"><input class='button-primary' type='submit' name='update' value='<?php _e("Update Options", 'ban-hammer'); ?>' id='submitbutton' /></p>
         
         </form>
         
