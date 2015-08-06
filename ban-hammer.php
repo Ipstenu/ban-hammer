@@ -82,7 +82,7 @@ function banhammer_validation($result) {
     $blacklist_array = explode("\n", $blacklist_string);
     $blacklist_size = sizeof($blacklist_array);
 
-    $data = $_POST['user_email'];
+    $data = sanitize_email($_POST['user_email']);
     
     // Go through blacklist
     for($i = 0; $i < $blacklist_size; $i++) {
@@ -191,30 +191,6 @@ if( is_multisite() ) {
   
 }
 
-function banhammer_plugin_help() {
-	global $banhammer_options_page;
-	$screen = get_current_screen();
-	if ( $screen->id == 'tools_page_banhammer' || $screen->id == 'settings_page_banhammer-network' )
-		
-	$screen->add_help_tab( array(
-		'id'      => 'ippy-banhammer-base',
-		'title'   => __('Readme', 'ban-hammer'),
-		'content' => 
-		'<h3>' . __('Ban Hammer', 'ban-hammer') .'</h3>' .
-		'<p>' . __( 'We\'ve all had this problem.  A group of spammers from mail.ru are registering to your blog, but you want to keep registration open.  How do you kill the spammers without bothering your clientele?  While you could edit your functions.php and block the domain, once you get past a few bad eggs, you have to escalate.', 'ban-hammer' ) . '</p>' . 
-		'<p>' . __( 'Ban Hammer does that for you, preventing unwanted users from registering.', 'ban-hammer' ) . '</p>' . 
-		'<p>' . __( 'On a single install of WP, instead of using its own database table, Ban Hammer pulls from your list of blacklisted emails from the Comment Blacklist feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them. On a network instance, there\'s a network wide setting for banned emails and domains. This means you only have <em>one</em> place to update and maintain your blacklist.  When a blacklisted user attempts to register, they get a customizable message that they cannot register.', 'ban-hammer' ) . '</p>' .
-		'<p>' . __( 'Limited free support can be found in the WordPress forums.','ban-hammer').'</p>'.
-		'<ul>'.
-			'<li><a href="http://wordpress.org/support/plugin/ban-hammer">'. __( 'Support Forums','ban-hammer').'</a></li>'.
-			'<li><a href="http://halfelf.org/my-plugins/ban-hammer/">'. __( 'Plugin Site','ban-hammer').'</a></li>'.
-			'<li><a href="https://store.halfelf.org/donate/">'. __( 'Donate','ban-hammer').'</a></li>'.
-		'</ul>'
-	));
-
-}
-add_action('contextual_help', 'banhammer_plugin_help', 10, 3);
-
 register_activation_hook( __FILE__, 'banhammer_activate' );
 
 // Settings Page
@@ -222,30 +198,28 @@ function banhammer_options() {
 
         ?>
         <div class="wrap">
-        
-        <div id="icon-edit-comments" class="icon32"></div>
-        <h2><?php _e("Ban Hammer", 'ban-hammer'); ?></h2>
+
+        <h1><?php _e("Ban Hammer", 'ban-hammer'); ?></h1>
         
         <?php
         
-                if (isset($_POST['update']))
-                {
-                // Update the Blacklist
-                    if ($blacklist_new_keys = $_POST['blacklist_keys'])
-                    {
-                        $banhammer_array = explode("\n", $blacklist_new_keys);
-                        sort ($banhammer_array);
-                        $banhammer_string = implode("\n", $banhammer_array);                            
+                if ( isset($_POST['update']) && check_admin_referer( 'banhammer_saveit') ) {
+                		// Update the Blacklist
+                    if ($blacklist_new_keys = $_POST['blacklist_keys'])	{
+						$blacklist_new_keys = explode( "\n", $blacklist_new_keys );
+						$blacklist_new_keys = array_filter( array_map( 'trim', $blacklist_new_keys ) );
+						$blacklist_new_keys = array_unique( $blacklist_new_keys );
+						$blacklist_new_keys = implode( "\n", $blacklist_new_keys );
+                           
                         if( is_multisite() ) { 
-                            update_site_option('banhammer_keys', $banhammer_string);
+                            update_site_option('banhammer_keys', $blacklist_new_keys);
                         } else {
-                            update_option('blacklist_keys', $banhammer_string);
+                            update_option('blacklist_keys', $blacklist_new_keys);
                       }
                     }
         				
-                // Update Ban Message
-                    if ($banhammer_newmess = $_POST['banhammer_newmess'])
-                    {
+					// Update Ban Message
+                    if ($banhammer_newmess = $_POST['banhammer_newmess']) {
                         if( is_multisite() ) { 
                             update_site_option('banhammer_message', $banhammer_newmess);
                         } else {
@@ -253,7 +227,7 @@ function banhammer_options() {
                         }
                     }
         ?>
-                <div id="message" class="updated fade"><p><strong><?php _e('Options Updated!', 'ban-hammer'); ?></strong></p></div>
+        <div id="message" class="updated fade"><p><strong><?php _e('Options Updated!', 'ban-hammer'); ?></strong></p></div>
 
 <?php   } 
     
@@ -268,12 +242,13 @@ if( is_multisite() ) {
 ?>
         
         <form method="post" width='1'>
+        <?php wp_nonce_field( 'banhammer_saveit' ); ?>
         
         <fieldset class="options">
         <legend><h3><?php _e('Personalize the Message', 'ban-hammer'); ?></h3></legend>
         <p><?php _e('The message below is displayed to users who are not allowed to register on your blog. Edit is as you see fit, but remember you don\'t get a lot of space so keep it simple.', 'ban-hammer'); ?></p>
         
-        <textarea name='banhammer_newmess' cols='80' rows='2'><?php echo $banhammer_blackmess; ?></textarea>
+        <textarea name='banhammer_newmess' cols='80' rows='2'><?php echo esc_html( $banhammer_blackmess ); ?></textarea>
         </fieldset>
         
         <fieldset class="options">
@@ -281,7 +256,7 @@ if( is_multisite() ) {
         <p><?php _e('The emails and domains added below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), but not partials past that.', 'ban-hammer'); ?></p>
         
         <textarea name="blacklist_keys" cols="40" rows="15"><?php
-                echo $banhammer_blacklist;
+                echo esc_textarea($banhammer_blacklist);
         ?></textarea>
         </fieldset>
                 <p class="submit"><input class='button-primary' type='submit' name='update' value='<?php _e("Update Options", 'ban-hammer'); ?>' id='submitbutton' /></p>
@@ -289,6 +264,5 @@ if( is_multisite() ) {
         </form>
         
         </div>
-        
-        </div> <?php
+<?php
         }
