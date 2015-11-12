@@ -2,8 +2,8 @@
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 3.4
-Tested up to: 4.3
-Stable tag: 2.4.1
+Tested up to: 4.4
+Stable tag: 2.5
 Donate Link: https://store.halfelf.org/donate/
 License: GPLv2
 
@@ -29,6 +29,13 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ==Changelog==
 
+= 2.5 =
+* 12 November 2015 by Ipstenu
+* Update for WP 4.4
+* Code moved to a singleton
+* Improved sanitization of emails
+* Fixed link to settings page
+
 = 2.4.1 = 
 * 6 August 2015 by Ipstenu
 * Security filtering improvements
@@ -39,93 +46,85 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 * Fixing define notice due to messing up text domain.
 
 = 2.3 =
-* 29 October, 2013 by Ipstenu
+* 29 October 2013 by Ipstenu
 * Languages for 3.7
 * Compat for 3.7
 
 = 2.2 =
-* 15 January, 2013 by Ipstenu
+* 15 January 2013 by Ipstenu
 * Fixed translation bug
 * Dropping support for older versions
 
 = 2.1 =
-* 26 August, 2012 by Ipstenu
+* 26 August 2012 by Ipstenu
 * The return of Multisite
 * BuddyPress improvements
 * Dropping support for older versions
 
 = 2.0 =
-* 30 May, 2012 by Ipstenu
+* 30 May 2012 by Ipstenu
 * Removal of Stop Forum Spam.
 * Whole plugin was consolidated to run faster, with fewer files, and with contextual help. Egad, I've learned a lot since 2009!
 
 = 1.7 =
-* 24 April, 2012 by Ipstenu
+* 24 April 2012 by Ipstenu
 * Proper uninstallation.
 
 = 1.6.1 =
-* 17 April, 2012 by Ipstenu
+* 17 April 2012 by Ipstenu
 * Cleanup. Nothing major here, just documentation and all.
 
 = 1.6 =
-* 05 August, 2011 by Ipstenu
+* 05 August 2011 by Ipstenu
 * Internationalization.
 
 = 1.5.2 =
-* 09 March, 2011 by Ipstenu
+* 09 March 2011 by Ipstenu
 * Bugfix.  Typo made it NOT enableable.
 
 = 1.5 =
-* 08 March, 2011 by Ipstenu
+* 08 March 2011 by Ipstenu
 * Allows for deletion of spammers from the User List (credit mario_7)
 * Added optional functionality to show spammer status on the normal users list.
 * Moved Ban Hammer Users to the USERS menu (now called 'Ban Hammered')
 * Works on BuddyPress!
 
 = 1.4 =
-* 16 August, 2010 by Ipstenu
+* 16 August 2010 by Ipstenu
 * Checks for presence of the cURL extension. If not found, the option to use StopForumSpam is removed. (using http://cleverwp.com/function-curl-php-extension-loaded/ as recommended by kmaisch )
 
 = 1.3 =
-* 08 July, 2010  by Ipstenu
+* 08 July 2010  by Ipstenu
 * Pulling out the WPMU stuff that's never going to happen now that it's MultiSite and doesn't work.
 
 = 1.2 =
-* 08 November, 2009  by Ipstenu
+* 08 November 2009  by Ipstenu
 * This lists all users marked by StopForumSpam as spammers, if you're using that option (and not if not). (Thanks to obruchez for the suggestion!).
 
 = 1.1 =
-* 03 May, 2009 by Ipstenu
+* 03 May 2009 by Ipstenu
 * Subversion before coffee = BAD.
 
 =  1.0 =
-* 03 May, 2009 by Ipstenu
+* 03 May 2009 by Ipstenu
 * First public version.
 
 =  0.3 =
-* 30 March, 2009 by Ipstenu
+* 30 March 2009 by Ipstenu
 * The error message is customizable.
 * Added support for StopForumSpam.com
 * Added in checkbox to use StopForumSpam (default to NO).
 * Cleans up after itself on deactivation (deletes the banhammer_foo values from the wp_options table because I HATE when plugins leave themselves).
 
 =  0.2 =
-* 29 March, 2009 by Ipstenu
+* 29 March 2009 by Ipstenu
 * Shifted to use the WordPress comment blacklist as source. This was pretty much an 80% re-write from NDE's basis, keeping only the basic check at registration code.
 
 =  0.1 =
-* 28 March, 2009 by Ipstenu
+* 28 March 2009 by Ipstenu
 * First release using No Disposable Email's .dat file as a source.
 
 == Upgrade Notice ==
-
-= 2.0 =
-
-This plugin no longer uses Stop Forum Spam. If you need that feature, please use <a href="http://wordpress.org/extend/plugins/stop-spammer-registrations-plugin/">Stop Spammer Registrations</a> instead. They did it way better.
-
-= 1.5.2 =
-
-Fixes problem with enabling NOT working at all. *sigh*
 
 == Installation ==
 
