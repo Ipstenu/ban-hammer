@@ -3,7 +3,7 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: This plugin prevent people from registering with any email you list.
-Version: 2.5
+Version: 2.5.1
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
@@ -86,8 +86,12 @@ class BanHammer {
 	 * @access public
 	 */
     public function init() {
-		// More admin functions
-		add_action( 'admin_menu', array( $this, 'admin_menu'));
+		// Admin Menus
+		if( is_multisite() ) {
+			add_action( 'network_admin_menu', array( $this, 'network_admin_menu'));
+		} else {
+			add_action( 'admin_menu', array( $this, 'admin_menu'));
+		}
 		
 		// Filter for if multisite but NOT BuddyPress
 		if( is_multisite() && ($this->buddypress == 0) ) {
@@ -116,11 +120,17 @@ class BanHammer {
 	 * @access public
 	 */
     public function admin_menu(){
-		if( is_multisite() ) {
-			add_submenu_page('settings.php', __('Ban Hammer', 'ban-hammer'), __('Ban Hammer', 'ban-hammer'), 'manage_networks', 'ban-hammer', array(&$this,'options') );
-		} else {
-		    add_management_page( __('Ban Hammer', 'ban-hammer'), __('Ban Hammer', 'ban-hammer'), 'moderate_comments', 'ban-hammer', array(&$this,'options') );
-		}
+		add_management_page( __('Ban Hammer', 'ban-hammer'), __('Ban Hammer', 'ban-hammer'), 'moderate_comments', 'ban-hammer', array(&$this,'options') );
+	}
+
+	/**
+	 * Network Admin Menu
+	 *
+	 * @since 2.5.1
+	 * @access public
+	 */
+    public function network_admin_menu(){
+		add_submenu_page('settings.php', __('Ban Hammer', 'ban-hammer'), __('Ban Hammer', 'ban-hammer'), 'manage_networks', 'ban-hammer', array(&$this,'options') );
 	}
 
 	/**
