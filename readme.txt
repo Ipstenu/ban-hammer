@@ -3,7 +3,7 @@ Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 3.4
 Tested up to: 4.4
-Stable tag: 2.5.1
+Stable tag: 2.5.2
 Donate Link: https://store.halfelf.org/donate/
 License: GPLv2
 
@@ -30,6 +30,10 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 ==Changelog==
 
 = 2.5.1 =
+* 15 November 2015 by Ipstenu
+* Bad sanitization choice killed settings for some people.
+
+= 2.5.1 =
 * 13 November 2015 by Ipstenu
 * People on Multisite couldn't access settings. There's a level of irony there.
 
@@ -40,7 +44,7 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 * Improved sanitization of emails
 * Fixed link to settings page
 
-= 2.4.1 = 
+= 2.4.1 =
 * 6 August 2015 by Ipstenu
 * Security filtering improvements
 
@@ -129,6 +133,8 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 * First release using No Disposable Email's .dat file as a source.
 
 == Upgrade Notice ==
+
+2.5.2 fixes an issue where partial email addresses were removed from the list on save.
 
 == Installation ==
 

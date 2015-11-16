@@ -3,7 +3,7 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: This plugin prevent people from registering with any email you list.
-Version: 2.5.1
+Version: 2.5.2
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
@@ -27,7 +27,7 @@ Copyright 2009-15 Mika Epstein (email: ipstenu@halfelf.org)
     along with WordPress.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-		
+
 class BanHammer {
 
 	var $buddypress;
@@ -55,7 +55,7 @@ class BanHammer {
 
 	/**
 	 * plugin_deactivate
-	 * 
+	 *
 	 * Deactive the plugin if called.
 	 *
 	 * @since 2.5
@@ -67,7 +67,7 @@ class BanHammer {
 
 	/**
 	 * plugin_deactivate_message
-	 * 
+	 *
 	 * Why we deactivated the plugin
 	 *
 	 * @since 2.5
@@ -92,21 +92,21 @@ class BanHammer {
 		} else {
 			add_action( 'admin_menu', array( $this, 'admin_menu'));
 		}
-		
+
 		// Filter for if multisite but NOT BuddyPress
 		if( is_multisite() && ($this->buddypress == 0) ) {
 		    add_filter('wpmu_validate_user_signup', array(&$this, 'validation') , 99);
 		}
-		
+
 		// If BuddyPress, we have to do something extra
 		if( $this->buddypress == 1 ) {
-			add_action( 'bp_include', array(&$this, 'buddypress_init') );	
+			add_action( 'bp_include', array(&$this, 'buddypress_init') );
 		}
-		
+
 		// The magic sauce
 		add_action('register_post', array(&$this, 'banhammer'), 10, 3);
 		register_activation_hook( __FILE__, array(&$this, 'activate') );
-		
+
 		// Settings links
 		add_filter('plugin_row_meta', array(&$this, 'donate_link'), 10, 2);
 		$plugin = plugin_basename(__FILE__);
@@ -142,7 +142,7 @@ class BanHammer {
 	 * @access public
 	 */
 	public function banhammer($user_login, $user_email, $errors) {
-        if( is_multisite() ) { 
+        if( is_multisite() ) {
             $the_blacklist = get_site_option('banhammer_keys');
         } else {
             $the_blacklist = get_option('blacklist_keys');
@@ -171,14 +171,14 @@ class BanHammer {
 	 * @access public
 	 */
 	public function validation($result) {
-	
+
 	    $the_blacklist = get_site_option('banhammer_keys');
 	    $blacklist_string = $the_blacklist;
 	    $blacklist_array = explode("\n", $blacklist_string);
 	    $blacklist_size = sizeof($blacklist_array);
-	
+
 	    $data = sanitize_email($_POST['user_email']);
-	    
+
 	    // Go through blacklist
 	    for($i = 0; $i < $blacklist_size; $i++) {
 	            $blacklist_current = trim($blacklist_array[$i]);
@@ -206,19 +206,19 @@ class BanHammer {
 	    	return $result;
 	    }
 	    add_filter( 'bp_core_validate_user_signup', array(&$this, 'buddypress_signup' ) );
-	    
+
 	    function banhammer_bp_bademail( $user_email ) {
-	        if( is_multisite() ) { 
+	        if( is_multisite() ) {
 	            $the_blacklist = get_site_option('banhammer_keys');
 	        } else {
 	            $the_blacklist = get_option('blacklist_keys');
 	        }
-	
+
 	        // Get blacklist
 	        $blacklist_string = $the_blacklist;
 	        $blacklist_array = explode("\n", $blacklist_string);
 	        $blacklist_size = sizeof($blacklist_array);
-	
+
 	        // Go through blacklist
 	        for($i = 0; $i < $blacklist_size; $i++) {
 	            $blacklist_current = trim($blacklist_array[$i]);
@@ -228,7 +228,7 @@ class BanHammer {
 	        }
 	    }
 	}
-	
+
 	/**
 	 * Activate
 	 *
@@ -240,9 +240,9 @@ class BanHammer {
 	public function activate() {
 	    if( is_multisite() ) {
 			add_site_option('banhammer_keys','spammer@example.com');
-			add_site_option('banhammer_message', '<strong>ERROR</strong>: Your email has been banned from registration.');   
+			add_site_option('banhammer_message', '<strong>ERROR</strong>: Your email has been banned from registration.');
 	    } else {
-	        add_option('banhammer_message', '<strong>ERROR</strong>: Your email has been banned from registration.');   
+	        add_option('banhammer_message', '<strong>ERROR</strong>: Your email has been banned from registration.');
 	    }
 	}
 
@@ -257,7 +257,7 @@ class BanHammer {
 	public function options() {
 	    ?><div class="wrap">
 	    <h1><?php _e("Ban Hammer", 'ban-hammer'); ?></h1>
-	        
+
         <?php
         if ( isset($_POST['update']) && check_admin_referer( 'banhammer_saveit') ) {
 			// Update the Blacklist
@@ -265,14 +265,14 @@ class BanHammer {
 				$new_blacklist = explode( "\n", $new_blacklist );
 				$new_blacklist = array_filter( array_map( 'trim', $new_blacklist ) );
 				$new_blacklist = array_unique( $new_blacklist );
-				
+
 				// Sanitize emails!
 				foreach ($new_blacklist as &$keyname) {
-				    $keyname = sanitize_email($keyname);
+				    $keyname = sanitize_text_field($keyname);
 				}
-				
+
 				$new_blacklist = implode( "\n", $new_blacklist );
-                   
+
 				if( is_multisite() ) {
 					update_site_option('banhammer_keys', $new_blacklist);
 				} else {
@@ -285,7 +285,7 @@ class BanHammer {
 	            		update_option('blacklist_keys', '');
 				}
 			}
-			
+
 			// Update Ban Message
 			if ( $new_message = wp_kses_post($_POST['new_message']) ) {
 				if( is_multisite() ) {
@@ -296,41 +296,41 @@ class BanHammer {
 			}
         ?>
 	        <div id="message" class="updated fade"><p><strong><?php _e('Options Updated!', 'ban-hammer'); ?></strong></p></div>
-	<?php   
-			} 
-	    
-	if( is_multisite() ) { 
+	<?php
+			}
+
+	if( is_multisite() ) {
 	    $the_blacklist = get_site_option('banhammer_keys');
 	    $the_message = get_site_option('banhammer_message');
 	} else {
 	    $the_blacklist = get_option('blacklist_keys');
 	    $the_message = get_option('banhammer_message');
 	}
-	
+
 	?>
-	        
+
 	        <form method="post" width='1'>
 	        <?php wp_nonce_field( 'banhammer_saveit' ); ?>
-	        
+
 	        <fieldset class="options">
 	        <legend><h3><?php _e('Personalize the Message', 'ban-hammer'); ?></h3></legend>
 	        <p><?php _e('The message below is displayed to users who are not allowed to register on your blog. Edit is as you see fit, but remember you don\'t get a lot of space so keep it simple.', 'ban-hammer'); ?></p>
-	        
+
 	        <textarea name='new_message' cols='80' rows='2'><?php echo esc_html( $the_message ); ?></textarea>
 	        </fieldset>
-	        
+
 	        <fieldset class="options">
 	        <legend><h3><?php _e('Blacklisted Emails', 'ban-hammer'); ?></h3></legend>
 	        <p><?php _e('The emails and domains added below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), but not partials past that.', 'ban-hammer'); ?></p>
-	        
+
 	        <textarea name="blacklist_keys" cols="40" rows="15"><?php
 	                echo esc_textarea($the_blacklist);
 	        ?></textarea>
 	        </fieldset>
 	                <p class="submit"><input class='button-primary' type='submit' name='update' value='<?php _e("Update Options", 'ban-hammer'); ?>' id='submitbutton' /></p>
-	        
+
 	        </form>
-	        
+
 	        </div>
 	<?php
 	    }
@@ -349,7 +349,7 @@ class BanHammer {
 	        }
 	        return $links;
 	}
-	
+
 	/**
 	 * Settings link
 	 *
@@ -357,17 +357,17 @@ class BanHammer {
 	 *
 	 * @access public
 	 */
-	public function settings_link($links) { 
+	public function settings_link($links) {
 		if( is_multisite() ) {
 			$settings_link = network_admin_url( 'settings.php?page=ban-hammer' );
 		} else {
 			$settings_link = admin_url( 'tools.php?page=ban-hammer' );
 		}
-		
+
 		$settings_link = '<a href="'.$settings_link.'">'.__("Settings", "ban-hammer").'</a>';
-		
-	    array_unshift($links, $settings_link); 
-	    return $links; 
+
+	    array_unshift($links, $settings_link);
+	    return $links;
 	}
 
 }
