@@ -3,7 +3,7 @@ Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 3.4
 Tested up to: 4.4
-Stable tag: 2.5.2
+Stable tag: 2.5.3
 Donate Link: https://store.halfelf.org/donate/
 License: GPLv2
 
@@ -28,6 +28,10 @@ Ban Hammer is a very weird fork of [Philippe Paquet's No Disposable Email plugin
 Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for StopForumSpam integration. MASSIVE credit to Travis Hamera for the StopForumSpam/cURL fix! And then props to Helen Hou-Sandi for not using curl at all. Protip? Use <a href="http://planetozh.com/blog/2009/08/how-to-make-http-requests-with-wordpress/">WP_http</a> instead!
 
 ==Changelog==
+
+= 2.5.2 =
+* 17 November 2015 by Ipstenu
+* Rolling back BuddyPress changes to correct
 
 = 2.5.1 =
 * 15 November 2015 by Ipstenu
@@ -135,6 +139,7 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 == Upgrade Notice ==
 
 2.5.2 fixes an issue where partial email addresses were removed from the list on save.
+2.5.3 fixes BuddyPress. I'm having a banner release. Sorry :(
 
 == Installation ==
 

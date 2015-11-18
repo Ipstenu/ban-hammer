@@ -3,7 +3,7 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: This plugin prevent people from registering with any email you list.
-Version: 2.5.2
+Version: 2.5.3
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
@@ -99,9 +99,9 @@ class BanHammer {
 		}
 
 		// If BuddyPress, we have to do something extra
-		if( $this->buddypress == 1 ) {
+		//if( $this->buddypress == 1 ) {
 			add_action( 'bp_include', array(&$this, 'buddypress_init') );
-		}
+		//}
 
 		// The magic sauce
 		add_action('register_post', array(&$this, 'banhammer'), 10, 3);
@@ -188,45 +188,6 @@ class BanHammer {
 	            }
 	    }
 	    return $result;
-	}
-
-	/**
-	 * BuddyPress Initialization
-	 *
-	 * Due to how BuddyPress Works, I had to break this out. See the link for why.
-	 * http://codex.buddypress.org/plugin-development/checking-buddypress-is-active/
-	 *
-	 * @since 1.5
-	 * @access public
-	 */
-	function buddypress_init() {
-	    function banhammer_bp_signup( $result ) {
-	    	if ( banhammer_bp_bademail( $result['user_email'] ) )
-	    		$result['errors']->add('user_email',  __( get_option('banhammer_message') ) );
-	    	return $result;
-	    }
-	    add_filter( 'bp_core_validate_user_signup', array(&$this, 'buddypress_signup' ) );
-
-	    function banhammer_bp_bademail( $user_email ) {
-	        if( is_multisite() ) {
-	            $the_blacklist = get_site_option('banhammer_keys');
-	        } else {
-	            $the_blacklist = get_option('blacklist_keys');
-	        }
-
-	        // Get blacklist
-	        $blacklist_string = $the_blacklist;
-	        $blacklist_array = explode("\n", $blacklist_string);
-	        $blacklist_size = sizeof($blacklist_array);
-
-	        // Go through blacklist
-	        for($i = 0; $i < $blacklist_size; $i++) {
-	            $blacklist_current = trim($blacklist_array[$i]);
-	            if(stripos($user_email, $blacklist_current) !== false) {
-	                 return true;
-	            }
-	        }
-	    }
 	}
 
 	/**
@@ -373,3 +334,48 @@ class BanHammer {
 }
 
 new BanHammer();
+
+/**
+ * BuddyPress Initialization
+ *
+ * Due to how BuddyPress Works, I had to break this out. See the link for why.
+ * http://codex.buddypress.org/plugin-development/checking-buddypress-is-active/
+ * I don't know why it won't work in the singleton and getting it working again for people 
+ * is more important right now.
+ *
+ * @since 1.5
+ * @access public
+ */
+
+add_action( 'bp_include', 'banhammer_bp_init' );
+
+function banhammer_bp_init() {
+    function banhammer_bp_signup( $result ) {
+    	if ( banhammer_bp_bademail( $result['user_email'] ) )
+    		$result['errors']->add('user_email',  __( get_option('banhammer_message') ) );
+    	return $result;
+    }
+    add_filter( 'bp_core_validate_user_signup', 'banhammer_bp_signup' );
+    
+    function banhammer_bp_bademail( $user_email ) {
+
+        if( is_multisite() ) { 
+            $banhammer_blacklist = get_site_option('banhammer_keys');
+        } else {
+            $banhammer_blacklist = get_option('blacklist_keys');
+        }
+
+        // Get blacklist
+        $blacklist_string = $banhammer_blacklist;
+        $blacklist_array = explode("\n", $blacklist_string);
+        $blacklist_size = sizeof($blacklist_array);
+
+        // Go through blacklist
+        for($i = 0; $i < $blacklist_size; $i++) {
+            $blacklist_current = trim($blacklist_array[$i]);
+            if(stripos($user_email, $blacklist_current) !== false) {
+                return true;
+            }
+        }
+    }
+}
