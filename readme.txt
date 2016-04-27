@@ -3,7 +3,7 @@ Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 3.4
 Tested up to: 4.5
-Stable tag: 2.5.3
+Stable tag: 2.5.4
 Donate Link: https://store.halfelf.org/donate/
 License: GPLv2
 
@@ -29,7 +29,11 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ==Changelog==
 
-= 2.5.2 =
+= 2.5.4 =
+* 27 April 2015 by Ipstenu
+* Changing priority to take precedence over other plugins that set new users to require approval.
+
+= 2.5.2 & 2.5.3 =
 * 17 November 2015 by Ipstenu
 * Rolling back BuddyPress changes to correct
 
@@ -138,8 +142,6 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 == Upgrade Notice ==
 
-2.5.2 fixes an issue where partial email addresses were removed from the list on save.
-2.5.3 fixes BuddyPress. I'm having a banner release. Sorry :(
 
 == Installation ==
 

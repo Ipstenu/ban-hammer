@@ -3,7 +3,7 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: This plugin prevent people from registering with any email you list.
-Version: 2.5.3
+Version: 2.5.4
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
@@ -99,12 +99,10 @@ class BanHammer {
 		}
 
 		// If BuddyPress, we have to do something extra
-		//if( $this->buddypress == 1 ) {
-			add_action( 'bp_include', array(&$this, 'buddypress_init') );
-		//}
+		add_action( 'bp_include', array(&$this, 'buddypress_init') );
 
 		// The magic sauce
-		add_action('register_post', array(&$this, 'banhammer'), 10, 3);
+		add_action('register_post', array(&$this, 'banhammer'), 1, 3);
 		register_activation_hook( __FILE__, array(&$this, 'activate') );
 
 		// Settings links
