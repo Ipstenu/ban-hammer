@@ -28,7 +28,7 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 ==Changelog==
 
 = 2.6 =
-* XX 2016 by Ipstenu
+* July 2016 by Ipstenu
 * Allow redirection on failed login.
 * Move plugin to Settings API
 * Combine options
