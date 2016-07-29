@@ -257,9 +257,9 @@ class BanHammer {
 		add_settings_section( 'banhammer-settings', '', array( &$this, 'banhammer_settings_callback'), 'ban-hammer-settings' );
 
 		// The Fields
-		add_settings_field( 'message', 'Blocked Message', array( &$this, 'message_callback'), 'ban-hammer-settings', 'banhammer-settings' );
-		add_settings_field( 'redirect', 'Redirect Blocked Users?', array( &$this, 'redirect_callback'), 'ban-hammer-settings', 'banhammer-settings' );
-		add_settings_field( 'blacklist', 'The Blacklist', array( &$this, 'blacklist_callback'), 'ban-hammer-settings', 'banhammer-settings' );
+		add_settings_field( 'message', __( 'Blocked Message' , 'ban-hammer' ), array( &$this, 'message_callback'), 'ban-hammer-settings', 'banhammer-settings' );
+		add_settings_field( 'redirect', __( 'Redirect Blocked Users?' , 'ban-hammer' ), array( &$this, 'redirect_callback'), 'ban-hammer-settings', 'banhammer-settings' );
+		add_settings_field( 'blacklist', __( 'The Blacklist' , 'ban-hammer' ), array( &$this, 'blacklist_callback'), 'ban-hammer-settings', 'banhammer-settings' );
 	}
 
 	/**
