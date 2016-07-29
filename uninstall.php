@@ -25,10 +25,6 @@ Copyright 2009-16 Mika Epstein (email: ipstenu@halfelf.org)
 if( !defined( 'ABSPATH') && !defined('WP_UNINSTALL_PLUGIN') )
 	exit();
 
-if( is_multisite() ) {
-    delete_site_option('banhammer_keys');
-    delete_site_option('banhammer_message');
-} else {
-    delete_option('blacklist_keys');
-    delete_option('banhammer_message');
-}
+delete_site_option('banhammer_message');
+delete_site_option('banhammer_options');
+delete_site_option('banhammer_keys');

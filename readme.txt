@@ -1,9 +1,9 @@
 === Ban Hammer ===
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
-Requires at least: 3.4
+Requires at least: 4.0
 Tested up to: 4.6
-Stable tag: 2.5.4
+Stable tag: 2.6
 Donate Link: https://store.halfelf.org/donate/
 License: GPLv2
 
@@ -17,8 +17,6 @@ Ban Hammer does that for you by preventing unwanted users from registering.
 
 On a single install of WP, instead of using its own database table, Ban Hammer pulls from your list of blacklisted emails from the Comment Blacklist feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them. On a network instance, there's a network wide setting for banned emails and domains. This means you only have <em>one</em> place to update and maintain your blacklist.  When a blacklisted user attempts to register, they get a customizable message that they cannot register.
 
-Ban Hammer <em>no longer</em> uses Stop Forum Spam. <a href="http://wordpress.org/extend/plugins/stop-spammer-registrations-plugin/">Stop Spammer Registrations</a> did it so much better, I bow to their genius.
-
 * [Donate](https://store.halfelf.org/donate/)
 
 = Credits =
@@ -29,119 +27,15 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ==Changelog==
 
-= 2.5.4 =
-* 27 April 2015 by Ipstenu
-* Changing priority to take precedence over other plugins that set new users to require approval.
-
-= 2.5.2 & 2.5.3 =
-* 17 November 2015 by Ipstenu
-* Rolling back BuddyPress changes to correct
-
-= 2.5.1 =
-* 15 November 2015 by Ipstenu
-* Bad sanitization choice killed settings for some people.
-
-= 2.5.1 =
-* 13 November 2015 by Ipstenu
-* People on Multisite couldn't access settings. There's a level of irony there.
-
-= 2.5 =
-* 12 November 2015 by Ipstenu
-* Update for WP 4.4
-* Code moved to a singleton
-* Improved sanitization of emails
-* Fixed link to settings page
-
-= 2.4.1 =
-* 6 August 2015 by Ipstenu
-* Security filtering improvements
-
-= 2.4 =
-* 1 October 2014 by Ipstenu
-* Fixing languages
-* Fixing define notice due to messing up text domain.
-
-= 2.3 =
-* 29 October 2013 by Ipstenu
-* Languages for 3.7
-* Compat for 3.7
-
-= 2.2 =
-* 15 January 2013 by Ipstenu
-* Fixed translation bug
-* Dropping support for older versions
-
-= 2.1 =
-* 26 August 2012 by Ipstenu
-* The return of Multisite
-* BuddyPress improvements
-* Dropping support for older versions
-
-= 2.0 =
-* 30 May 2012 by Ipstenu
-* Removal of Stop Forum Spam.
-* Whole plugin was consolidated to run faster, with fewer files, and with contextual help. Egad, I've learned a lot since 2009!
-
-= 1.7 =
-* 24 April 2012 by Ipstenu
-* Proper uninstallation.
-
-= 1.6.1 =
-* 17 April 2012 by Ipstenu
-* Cleanup. Nothing major here, just documentation and all.
-
-= 1.6 =
-* 05 August 2011 by Ipstenu
-* Internationalization.
-
-= 1.5.2 =
-* 09 March 2011 by Ipstenu
-* Bugfix.  Typo made it NOT enableable.
-
-= 1.5 =
-* 08 March 2011 by Ipstenu
-* Allows for deletion of spammers from the User List (credit mario_7)
-* Added optional functionality to show spammer status on the normal users list.
-* Moved Ban Hammer Users to the USERS menu (now called 'Ban Hammered')
-* Works on BuddyPress!
-
-= 1.4 =
-* 16 August 2010 by Ipstenu
-* Checks for presence of the cURL extension. If not found, the option to use StopForumSpam is removed. (using http://cleverwp.com/function-curl-php-extension-loaded/ as recommended by kmaisch )
-
-= 1.3 =
-* 08 July 2010  by Ipstenu
-* Pulling out the WPMU stuff that's never going to happen now that it's MultiSite and doesn't work.
-
-= 1.2 =
-* 08 November 2009  by Ipstenu
-* This lists all users marked by StopForumSpam as spammers, if you're using that option (and not if not). (Thanks to obruchez for the suggestion!).
-
-= 1.1 =
-* 03 May 2009 by Ipstenu
-* Subversion before coffee = BAD.
-
-=  1.0 =
-* 03 May 2009 by Ipstenu
-* First public version.
-
-=  0.3 =
-* 30 March 2009 by Ipstenu
-* The error message is customizable.
-* Added support for StopForumSpam.com
-* Added in checkbox to use StopForumSpam (default to NO).
-* Cleans up after itself on deactivation (deletes the banhammer_foo values from the wp_options table because I HATE when plugins leave themselves).
-
-=  0.2 =
-* 29 March 2009 by Ipstenu
-* Shifted to use the WordPress comment blacklist as source. This was pretty much an 80% re-write from NDE's basis, keeping only the basic check at registration code.
-
-=  0.1 =
-* 28 March 2009 by Ipstenu
-* First release using No Disposable Email's .dat file as a source.
+= 2.6 =
+* XX 2016 by Ipstenu
+* Allow redirection on failed login.
+* Move plugin to Settings API
+* Combine options
+* Removed check for WP 3.4 (only 4.0 and up get updates anyway)
 
 == Upgrade Notice ==
-
+Version 2.6 is a major update. You may need to reset your error messages in some situations.
 
 == Installation ==
 
@@ -183,7 +77,7 @@ Yes. Caveat: I have not fully tested with Multisite and BuddyPress, so I want to
 
 = Can I block partials? =
 
-You can block by domain by entering @example.com, but you cannot block all .com emails. This is because of the crossover between the Blacklist and the Ban List. Say, for example, you want to block the word cookie from being said in comments. If you did that, Ban Hammer would block cookiemonster@sesamestreet.org too!
+Yes but not wildcards. If you put in 'viagra' for example, you will block 'viagrajones@gmail.com' _and_ 'john@viagra.com' so please use this carefully. If you put in 'cookie' then you'll block 'cookiemonster@sesamestreet.edu' and everyone would be sad.
 
 = Why doesn't this work AT ALL on my site!? =
 

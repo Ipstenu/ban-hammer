@@ -3,6 +3,7 @@ Ban Hammer
 
 ## Documentation
 * [WordPress Readme](readme.txt)
+* [Changelog](changelog.txt)
 
 ## Links
 
