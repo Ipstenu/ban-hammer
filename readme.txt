@@ -29,7 +29,7 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 = 2.6 =
 * July 2016 by Ipstenu
-* Allow redirection on failed login.
+* Allow redirection to custom URLs on failed login.
 * Move plugin to Settings API
 * Combine options
 * Removed check for WP 3.4 (only 4.0 and up get updates anyway)
