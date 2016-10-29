@@ -105,6 +105,9 @@ class BanHammer {
 		add_action('register_post', array(&$this, 'banhammer'), 1, 3);
 		register_activation_hook( __FILE__, array(&$this, 'activate') );
 
+	    //Woocommerce Support
+	    add_filter('woocommerce_registration_errors', array(&$this, 'woocommerce_validation'), 1);
+
 		// Settings links
 		add_filter('plugin_row_meta', array(&$this, 'donate_link'), 10, 2);
 		$plugin = plugin_basename(__FILE__);
@@ -187,6 +190,37 @@ class BanHammer {
 	    }
 	    return $result;
 	}
+
+
+	/**
+	 * Validation Woocommerce login
+	 *
+	 * Validate the keys
+	 *
+	 * @since 1.0
+	 * @access public
+	 */
+	public function woocommerce_validation($errors) {
+
+
+		$the_blacklist = get_site_option('blacklist_keys');
+		$blacklist_string = $the_blacklist;
+		$blacklist_array = explode("\n", $blacklist_string);
+		$blacklist_size = sizeof($blacklist_array);
+
+		$data = sanitize_email($_POST['email']);
+
+		// Go through blacklist
+		for($i = 0; $i < $blacklist_size; $i++) {
+			$blacklist_current = trim($blacklist_array[$i]);
+			if(stripos($data, $blacklist_current) !== false) {
+				$errors->add( 'blocked', __( get_site_option('banhammer_message') ));
+			}
+		}
+		return $errors;
+	}
+
+
 
 	/**
 	 * Activate
@@ -338,7 +372,7 @@ new BanHammer();
  *
  * Due to how BuddyPress Works, I had to break this out. See the link for why.
  * http://codex.buddypress.org/plugin-development/checking-buddypress-is-active/
- * I don't know why it won't work in the singleton and getting it working again for people 
+ * I don't know why it won't work in the singleton and getting it working again for people
  * is more important right now.
  *
  * @since 1.5
@@ -354,10 +388,10 @@ function banhammer_bp_init() {
     	return $result;
     }
     add_filter( 'bp_core_validate_user_signup', 'banhammer_bp_signup' );
-    
+
     function banhammer_bp_bademail( $user_email ) {
 
-        if( is_multisite() ) { 
+        if( is_multisite() ) {
             $banhammer_blacklist = get_site_option('banhammer_keys');
         } else {
             $banhammer_blacklist = get_option('blacklist_keys');
