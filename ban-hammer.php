@@ -61,11 +61,6 @@ class BanHammer {
 	    //allow this instance to be called from outside the class
         self::$instance = $this;
 
-		if(defined( 'BP_PLUGIN_DIR' )) {
-			$this->buddypress = 1;
-		} else {
-			$this->buddypress = 0;
-		}
 		add_action( 'init', array( &$this, 'init' ) );
 		add_action( 'admin_init', array( &$this, 'admin_init' ) );
 
@@ -115,15 +110,26 @@ class BanHammer {
 	 */
 	public function init() {
 		// Filter for if multisite but NOT BuddyPress
-		if( is_multisite() && ( $this->buddypress == 0) ) {
-			add_filter( 'wpmu_validate_user_signup', array( &$this, 'wpmu_validation' ) , 99);
-		}
-
-		// If BuddyPress, we have to do something extra
-		add_action( 'bp_include', array( &$this, 'buddypress_init' ) );
+		if( is_multisite() && !defined( 'BP_PLUGIN_DIR' ) )
+			add_filter( 'wpmu_validate_user_signup', array( &$this, 'wpmu_validation' ), 99);
+		
+		if ( defined( 'BP_PLUGIN_DIR' ) )
+			add_filter( 'bp_core_validate_user_signup', array( &$this, 'buddypress_signup' ) );
 
 		// The magic sauce
-		add_action( 'register_post', array( &$this, 'banhammer' ), 1, 3);
+		add_action( 'register_post', array( &$this, 'banhammer_drop' ), 1, 3);
+	}
+
+	/**
+	 * BuddyPress Signup Filter
+	 *
+	 * @since 2.6
+	 * @access public
+	 */
+	public function buddypress_signup( $result ) {
+		if( $this->banhammer_drop( $result['user_name'] , $result['user_email'], $result['errors'] ) )
+			$result['errors']->add( 'user_email', $this->options['message'] );
+		return $result;
 	}
 	
 	/**
@@ -140,6 +146,29 @@ class BanHammer {
 
 	    // Register Settings
 		$this->register_settings();
+		
+		// Warn if Registration isn't active
+		if ( !get_option( 'users_can_register' ) ) {
+			$this->notice_message = __('Registration is disabled. Ban Hammer will not work.', 'ban-hammer');
+			$this->notice_class = 'warning';
+			
+			if ( is_multisite() ) {
+				add_action( 'network_admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
+			} else {
+				add_action( 'admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
+			}
+		}
+	}
+
+    /**
+	 * Admin Notices
+	 *
+	 * Display admin notices as needed.
+	 *
+	 * @since 2.6
+	 */
+	public function admin_notices () {
+		printf( '<div class="notice notice-%1$s"><p>%2$s</p></div>', $this->notice_class, $this->notice_message ); 
 	}
 
     /**
@@ -415,7 +444,7 @@ class BanHammer {
 	 * @since 1.0
 	 * @access public
 	 */
-	public function banhammer($user_login, $user_email, $errors) {
+	public function banhammer_drop($user_login, $user_email, $errors) {
 		if( is_multisite() ) {
 			$the_blacklist = get_site_option( 'banhammer_keys' );
 		} else {
@@ -429,13 +458,14 @@ class BanHammer {
 		// Go through blacklist
 		for($i = 0; $i < $blacklist_size; $i++) {
 			$blacklist_current = trim($blacklist_array[$i]);
-			if(stripos($user_email, $blacklist_current) !== false) {
+			if( stripos($user_email, $blacklist_current) !== false ) {
 				
 				$errors->add( 'invalid_email', __( $this->options['message'] ));
 				if ( $this->options['redirect'] == 'yes' ) {
 					wp_redirect( $this->options['redirect_url'] );
+				} else {
+					return true;
 				}
-				return;
 			}
 		}
 	}
@@ -510,48 +540,3 @@ class BanHammer {
 }
 
 new BanHammer();
-
-/**
- * BuddyPress Initialization
- *
- * Due to how BuddyPress Works, I had to break this out. See the link for why.
- * http://codex.buddypress.org/plugin-development/checking-buddypress-is-active/
- * I don't know why it won't work in the singleton and getting it working again for people 
- * is more important right now.
- *
- * @since 1.5
- * @access public
- */
-
-add_action( 'bp_include', 'banhammer_bp_init' );
-
-function banhammer_bp_init() {
-	function banhammer_bp_signup( $result ) {
-		if( banhammer_bp_bademail( $result['user_email'] ) )
-			$result['errors']->add( 'user_email',  __( $this->options['message'] ) );
-		return $result;
-	}
-	add_filter( 'bp_core_validate_user_signup', 'banhammer_bp_signup' );
-	
-	function banhammer_bp_bademail( $user_email ) {
-
-		if( is_multisite() ) { 
-			$banhammer_blacklist = get_site_option( 'banhammer_keys' );
-		} else {
-			$banhammer_blacklist = get_option( 'blacklist_keys' );
-		}
-
-		// Get blacklist
-		$blacklist_string = $banhammer_blacklist;
-		$blacklist_array = explode("\n", $blacklist_string);
-		$blacklist_size = sizeof($blacklist_array);
-
-		// Go through blacklist
-		for($i = 0; $i < $blacklist_size; $i++) {
-			$blacklist_current = trim($blacklist_array[$i]);
-			if(stripos($user_email, $blacklist_current) !== false) {
-				return true;
-			}
-		}
-	}
-}

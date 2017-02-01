@@ -28,14 +28,15 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 ==Changelog==
 
 = 2.6 =
-* July 2016 by Ipstenu
+* February 2017 by Ipstenu
 * Allow redirection to custom URLs on failed login.
 * Move plugin to Settings API
 * Combine options
+* Fixed BuddyPress
 * Removed check for WP 3.4 (only 4.0 and up get updates anyway)
 
 == Upgrade Notice ==
-Version 2.6 is a major update. You may need to reset your error messages in some situations.
+Version 2.6 is a major update. You MAY need to reset your error messages in some situations.
 
 == Installation ==
 
@@ -57,7 +58,7 @@ After installation, go to **Network Admin > Settings > Ban Hammer** to customize
 
 = If I change the blacklist via Ban Hammer, will it change the Comment Blacklist? =
 
-Yes! They are the exact same list, they use the same fields and they update the same data.  The only reason I put it there was I felt having an all-in-one place to get the data would be better.
+On **single site installs**, yes. They are the exact same list, they use the same fields and they update the same data.  The only reason I put it there was I felt having an all-in-one place to get the data would be better.
 
 = Does this list the rejected registers? =
 
