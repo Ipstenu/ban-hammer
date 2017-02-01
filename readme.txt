@@ -94,5 +94,3 @@ If you want to block everyone from all subdomains (like `joe@bar.example.com`) t
 = Why doesn't this work AT ALL on my site!? =
 
 I'm not sure. I've gotten a handful of reports from people where it's not working, and for the life of me, I'm stumped. So far, it looks like Zend and/or eAccelerator aren't agreeing with this. If it's failing, please post on the wp.org forums with your server specs (PHP info, server type, etc) and any plugins you're running.
-
-
