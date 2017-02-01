@@ -33,6 +33,7 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 * Move plugin to Settings API
 * Combine options
 * Fixed BuddyPress
+* Optimized multisite
 * Removed check for WP 3.4 (only 4.0 and up get updates anyway)
 
 == Upgrade Notice ==
@@ -41,9 +42,11 @@ Version 2.6 is a major update. You MAY need to reset your error messages in some
 == Installation ==
 
 <strong>Single Install</strong>
+
 After installation, go to **Tools > Ban Hammer** to customize the error message (and banned emails, but it's the same list from your comment moderation so...).
 
 <strong>Multisite</strong>
+
 After installation, go to **Network Admin > Settings > Ban Hammer** to customize the error message and banned email list. This will ban users network wide.
 
 == Screenshots ==
@@ -58,11 +61,11 @@ After installation, go to **Network Admin > Settings > Ban Hammer** to customize
 
 = If I change the blacklist via Ban Hammer, will it change the Comment Blacklist? =
 
-On **single site installs**, yes. They are the exact same list, they use the same fields and they update the same data.  The only reason I put it there was I felt having an all-in-one place to get the data would be better.
+On **single site installs**, yes. They are the exact same list, they use the same fields and they update the same data. The only reason I put it there was I felt having an all-in-one place to get the data would be better.
 
 = Does this list the rejected registers? =
 
-No.  Since WordPress doesn't list rejected comments (your blacklist goes to a blackhole), I didn't bother with trying to do that here. If enough people think it's a need, I may consider it.
+No. Since WordPress doesn't list rejected comments (your blacklist goes to a blackhole), the rejected users are similarly lost forever.
 
 = Where did Stop Forum Spam go? =
 
@@ -70,15 +73,17 @@ This plugin no longer uses Stop Forum Spam. If you need that feature, please use
 
 = Does this work on MultiSite? =
 
-Surprise! Yes! If you're using multisite, instead of pulling from the comment blacklist (which is per site), you have a separate list off Network Admin -> Settings. This is because you only want to have the network admins determining who can register on the network.
+Yes it does, but a little differently If you're using multisite, instead of pulling from the comment blacklist (which is per site), you have a separate list off Network Admin -> Settings. This is because you only want to have the network admins determining who can register on the network.
 
 = Does this work on BuddyPress? =
 
-Yes. Caveat: I have not fully tested with Multisite and BuddyPress, so I want to warn you that it doesn't always give the pretty error message. It does ban hammer them, though, so ... yay?
+Currently yes.
 
 = Can I block partials? =
 
-Yes but not wildcards. If you put in 'viagra' for example, you will block 'viagrajones@gmail.com' _and_ 'john@viagra.com' so please use this carefully. If you put in 'cookie' then you'll block 'cookiemonster@sesamestreet.edu' and everyone would be sad.
+Yes but not wildcards. If you put in `viagra` for example, you will block `viagrajones@gmail.com` _and_ `john@viagra.com` so please use this carefully. If you put in `cookie` then you'll block `cookiemonster@sesamestreet.edu` and everyone would be sad.
+
+If you want to block everyone from all subdomains (like `joe@bar.example.com`) then you can block `.example.com` and that will block all the subdomains.
 
 = Why doesn't this work AT ALL on my site!? =
 

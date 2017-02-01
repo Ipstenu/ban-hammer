@@ -479,26 +479,8 @@ class BanHammer {
 	 * @access public
 	 */
 	public function wpmu_validation($result) {
-
-		$the_blacklist = get_site_option( 'banhammer_keys' );
-		$blacklist_string = $the_blacklist;
-		$blacklist_array = explode("\n", $blacklist_string);
-		$blacklist_size = sizeof($blacklist_array);
-
-		$data = sanitize_email( $_POST['user_email'] );
-
-		// Go through blacklist
-		for($i = 0; $i < $blacklist_size; $i++) {
-				$blacklist_current = trim($blacklist_array[$i]);
-				if( stripos($data, $blacklist_current) !== false ) {
-					$result['errors']->add( 'invalid_email', __( $this->options['message'] ));
-					echo '<p class="error">'. $this->options['message'] .'</p>';
-
-					if ( $this->options['redirect'] == 'yes' ) {
-						wp_redirect( $this->options['redirect_url'] );
-					}
-				}
-		}
+		if( $this->banhammer_drop( $_POST['user_name'], $_POST['user_email'], $result['errors'] ) )
+			$result['errors']->add( 'user_email', $this->options['message'] );
 		return $result;
 	}
 
