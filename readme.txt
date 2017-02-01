@@ -17,13 +17,15 @@ Ban Hammer does that for you by preventing unwanted users from registering.
 
 On a single install of WP, instead of using its own database table, Ban Hammer pulls from your list of blacklisted emails from the Comment Blacklist feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them. On a network instance, there's a network wide setting for banned emails and domains. This means you only have <em>one</em> place to update and maintain your blacklist.  When a blacklisted user attempts to register, they get a customizable message that they cannot register.
 
+For advanced documentation, including how to use on WooCommerce, please visit [the Ban Hammer Wiki](https://github.com/Ipstenu/ban-hammer/wiki).
+
 * [Donate](https://store.halfelf.org/donate/)
 
 = Credits =
 
 Ban Hammer is a very weird fork of [Philippe Paquet's No Disposable Email plugin](http://www.joeswebtools.com/wordpress-plugins/no-disposable-email/). The original plugin was a straight forward .dat file that listed all the bad emails (generally ones like mailinator that are disposable) and while Ban Hammer doesn't do that, this would not have been possible without that which was done before.
 
-Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for StopForumSpam integration. MASSIVE credit to Travis Hamera for the StopForumSpam/cURL fix! And then props to Helen Hou-Sandi for not using curl at all. Protip? Use <a href="http://planetozh.com/blog/2009/08/how-to-make-http-requests-with-wordpress/">WP_http</a> instead!
+Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for StopForumSpam integration. MASSIVE credit to Travis Hamera for the StopForumSpam/cURL fix! And then props to Helen Hou-Sandí for not using curl at all. Protip? Use <a href="http://planetozh.com/blog/2009/08/how-to-make-http-requests-with-wordpress/">WP_http</a> instead!
 
 ==Changelog==
 
@@ -79,6 +81,10 @@ Yes it does, but a little differently If you're using multisite, instead of pull
 
 Currently yes.
 
+= Does this work on WooCommerce? =
+
+Yes but... You have to make your own hook because WooCommerce doesn't use the normal registration functions. Don't panic. I have [directions here](https://github.com/Ipstenu/ban-hammer/wiki#woocommerce).
+
 = Can I block partials? =
 
 Yes but not wildcards. If you put in `viagra` for example, you will block `viagrajones@gmail.com` _and_ `john@viagra.com` so please use this carefully. If you put in `cookie` then you'll block `cookiemonster@sesamestreet.edu` and everyone would be sad.
@@ -88,3 +94,5 @@ If you want to block everyone from all subdomains (like `joe@bar.example.com`) t
 = Why doesn't this work AT ALL on my site!? =
 
 I'm not sure. I've gotten a handful of reports from people where it's not working, and for the life of me, I'm stumped. So far, it looks like Zend and/or eAccelerator aren't agreeing with this. If it's failing, please post on the wp.org forums with your server specs (PHP info, server type, etc) and any plugins you're running.
+
+

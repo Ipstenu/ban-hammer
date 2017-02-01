@@ -1,7 +1,7 @@
 <?php
 /*
 
-Copyright 2009-16 Mika Epstein (email: ipstenu@halfelf.org)
+Copyright 2009-17 Mika Epstein (email: ipstenu@halfelf.org)
 
     This file is part of Ban Hammer, a plugin for WordPress.
 
