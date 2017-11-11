@@ -4,7 +4,7 @@ Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 4.0
 Tested up to: 4.9
 Stable tag: 2.6
-Donate Link: https://store.halfelf.org/donate/
+Donate Link: https://ko-fi.com/A236CENl/
 License: GPLv2
 
 Prevent people from registering via your comment moderation blacklist.
@@ -19,7 +19,7 @@ On a single install of WP, instead of using its own database table, Ban Hammer p
 
 For advanced documentation, including how to use on WooCommerce, please visit [the Ban Hammer Wiki](https://github.com/Ipstenu/ban-hammer/wiki).
 
-* [Donate](https://store.halfelf.org/donate/)
+* [Donate](https://ko-fi.com/A236CENl/)
 
 = Credits =
 
