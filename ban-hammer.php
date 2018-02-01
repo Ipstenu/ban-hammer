@@ -2,14 +2,14 @@
 /*
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
-Description: This plugin prevent people from registering with any email you list.
-Version: 2.6
+Description:Prevent people from registering with any email you list.
+Version: 2.6.1
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
 Text Domain: ban-hammer
 
-Copyright 2009-17 Mika Epstein (email: ipstenu@halfelf.org)
+Copyright 2009-18 Mika Epstein (email: ipstenu@halfelf.org)
 
 	This file is part of Ban Hammer, a plugin for WordPress.
 
@@ -37,11 +37,11 @@ class BanHammer {
 	 */
 
 	// Holds option data.
-    var $option_name = 'banhammer_options';
-    var $option_defaults;
-    
-    // DB version, for schema upgrades.
-    var $db_version = 1;
+	var $option_name = 'banhammer_options';
+	var $option_defaults;
+
+	// DB version, for schema upgrades.
+	var $db_version = 1;
 
 	// Constants
 	var $buddypress;
@@ -58,8 +58,8 @@ class BanHammer {
 	 */
 	public function __construct() {
 
-	    //allow this instance to be called from outside the class
-        self::$instance = $this;
+		//allow this instance to be called from outside the class
+		self::$instance = $this;
 
 		add_action( 'init', array( &$this, 'init' ) );
 		add_action( 'admin_init', array( &$this, 'admin_init' ) );
@@ -72,15 +72,15 @@ class BanHammer {
 			add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 		}
 
-    		// Setting plugin defaults here:
+		// Setting plugin defaults here:
 		$this->option_defaults = array( 
-			'db_version' 		=> $this->db_version,
-			'redirect' 			=> 'no', 
-			'redirect_url' 		=> 'http://example.com',
-			'message'			=> '<strong>ERROR</strong>: Your email has been banned from registration.',
+			'db_version'   => $this->db_version,
+			'redirect'     => 'no', 
+			'redirect_url' => 'http://example.com',
+			'message'      => '<strong>ERROR</strong>: Your email has been banned from registration.',
 		);
 
-        // Fetch and set up options.
+		// Fetch and set up options.
 		$this->options = wp_parse_args( get_site_option( $this->option_name ), $this->option_defaults, false );
 
 		if ( is_multisite() ) {
@@ -89,17 +89,17 @@ class BanHammer {
 			$this->blacklist = get_option( 'blacklist_keys' );
 		}
 
-	    // check if DB needs to be upgraded (this will merge old settings to new)
-	    $naked_options = get_site_option( $this->option_name );
-	    
-	    if ( !isset( $naked_options['db_version'] ) || $naked_options['db_version'] < $this->db_version ) {
+		// check if DB needs to be upgraded (this will merge old settings to new)
+		$naked_options = get_site_option( $this->option_name );
+
+		if ( !isset( $naked_options['db_version'] ) || $naked_options['db_version'] < $this->db_version ) {
 			if ( isset($old_b_message) && !is_null( $old_b_message ) ) { 
 				$current_db_version = 0;
 			} else {
 				$current_db_version = isset( $naked_options['db_version'] ) ? $naked_options['db_version'] : 0; 
 			}
-	       $this->upgrade( $current_db_version );
-	    }
+			$this->upgrade( $current_db_version );
+		}
 	}
 
 	/**
@@ -112,7 +112,7 @@ class BanHammer {
 		// Filter for if multisite but NOT BuddyPress
 		if( is_multisite() && !defined( 'BP_PLUGIN_DIR' ) )
 			add_filter( 'wpmu_validate_user_signup', array( &$this, 'wpmu_validation' ), 99);
-		
+
 		if ( defined( 'BP_PLUGIN_DIR' ) )
 			add_filter( 'bp_core_validate_user_signup', array( &$this, 'buddypress_signup' ) );
 
@@ -137,21 +137,21 @@ class BanHammer {
 	 *
 	 * @since 2.6
 	 */
-    function admin_init() {	
+	function admin_init() {	
 
 		// Settings links
 		add_filter( 'plugin_row_meta', array( &$this, 'donate_link' ), 10, 2);
 		$plugin = plugin_basename(__FILE__);
-		add_filter("plugin_action_links_$plugin", array( &$this, 'settings_link' ) );
+		add_filter( 'plugin_action_links_$plugin', array( &$this, 'settings_link' ) );
 
-	    // Register Settings
+		// Register Settings
 		$this->register_settings();
-		
+
 		// Warn if Registration isn't active
-		if ( !get_option( 'users_can_register' ) ) {
-			$this->notice_message = __('Registration is disabled. Ban Hammer will not work.', 'ban-hammer');
+		if ( !get_option( 'users_can_register' ) && user_can( get_current_user_id(), 'moderate_comments' ) ) {
+			$this->notice_message = __( 'Registration is disabled. Ban Hammer will not work.', 'ban-hammer' );
 			$this->notice_class = 'warning';
-			
+
 			if ( is_multisite() ) {
 				add_action( 'network_admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
 			} else {
@@ -160,7 +160,7 @@ class BanHammer {
 		}
 	}
 
-    /**
+	/**
 	 * Admin Notices
 	 *
 	 * Display admin notices as needed.
@@ -171,27 +171,27 @@ class BanHammer {
 		printf( '<div class="notice notice-%1$s"><p>%2$s</p></div>', $this->notice_class, $this->notice_message ); 
 	}
 
-    /**
+	/**
 	 * Upgrades Database
 	 *
 	 * @param int $current_db_version the current DB version
 	 * @since 2.6
 	 */
 	function upgrade( $current_db_version ) {
-	    if ( $current_db_version < 1 ) {
+		if ( $current_db_version < 1 ) {
 
-		    // Migrate old options to new
-	        $this->options['redirect'] = $this->option_defaults['redirect'];
-	        $this->options['redirect_url'] = $this->option_defaults['redirect_url'];
-	        $this->options['message'] = get_option('banhammer_message', $this->option_defaults['message']);
-	        	$this->options['db_version'] = '1';
-	        
-	        // Delete old options
-	        delete_site_option( 'banhammer_message' );
-	    } 
-		
+			// Migrate old options to new
+			$this->options['redirect']     = $this->option_defaults['redirect'];
+			$this->options['redirect_url'] = $this->option_defaults['redirect_url'];
+			$this->options['message']      = get_option( 'banhammer_message', $this->option_defaults['message'] );
+			$this->options['db_version']   = '1';
+
+			// Delete old options
+			delete_site_option( 'banhammer_message' );
+		} 
+
 		update_site_option( $this->option_name, $this->options );
-    }
+	}
 
 
 	/**
@@ -221,13 +221,12 @@ class BanHammer {
 	 */
 
 	function network_admin_screen() {
-	    $current_screen = get_current_screen();
-	    if( $current_screen->id === "settings_page_ban-hammer-network" ) {
+		$current_screen = get_current_screen();
+		if( $current_screen->id === 'settings_page_ban-hammer-network' ) {
 	
-	        	if ( isset( $_POST['update'] ) && check_admin_referer( 'banhammer_networksave') ) {
-				
+			if ( isset( $_POST['update'] ) && check_admin_referer( 'banhammer_networksave') ) {
 				$options = $this->options;
-				$input = $_POST['banhammer_options'];
+				$input   = $_POST['banhammer_options'];
 				$output['db_version'] = $this->db_version;
 
 				// Message
@@ -250,28 +249,28 @@ class BanHammer {
 					$new_blacklist = implode( "\n", $new_blacklist );
 					update_site_option( 'banhammer_keys', $new_blacklist);
 				}
-		        unset( $input['blacklist'] );
-		
+				unset( $input['blacklist'] );
+
 				// Redirect
 				if ( !isset($input['redirect']) || is_null( $input['redirect'] ) || $input['redirect'] == '0' ) {
 					$output['redirect'] = false;
 				} else {
 					$output['redirect'] = true;
 				}
-				
+
 				// Redirect URL
 				if ( isset($input['redirect_url']) && $input['redirect_url'] !== $options['redirect_url'] ) {
 					$output['redirect_url'] = esc_url( $input['redirect_url'] );;
 				} else {
-					$output['redirect_url'] = $options['redirect_url'];		
+					$output['redirect_url'] = $options['redirect_url'];
 				}
-				
+
 				$this->options = $output;
 				update_site_option( $this->option_name, $output );
 
 				?><div class="notice notice-success is-dismissible"><p><strong><?php _e('Options Updated!', 'ban-hammer'); ?></strong></p></div><?php
 			}
-	    }
+		}
 	}
 
 	/**
@@ -279,16 +278,16 @@ class BanHammer {
 	 *
 	 * @since 2.6
 	 */
-    function register_settings() {
-	    register_setting( 'ban-hammer', 'banhammer_options', array( &$this, 'banhammer_sanitize' ) );
+	function register_settings() {
+		register_setting( 'ban-hammer', 'banhammer_options', array( &$this, 'banhammer_sanitize' ) );
 
 		// The main section
 		add_settings_section( 'banhammer-settings', '', array( &$this, 'banhammer_settings_callback'), 'ban-hammer-settings' );
 
 		// The Fields
-		add_settings_field( 'message', __( 'Blocked Message' , 'ban-hammer' ), array( &$this, 'message_callback'), 'ban-hammer-settings', 'banhammer-settings' );
-		add_settings_field( 'redirect', __( 'Redirect Blocked Users?' , 'ban-hammer' ), array( &$this, 'redirect_callback'), 'ban-hammer-settings', 'banhammer-settings' );
-		add_settings_field( 'blacklist', __( 'The Blacklist' , 'ban-hammer' ), array( &$this, 'blacklist_callback'), 'ban-hammer-settings', 'banhammer-settings' );
+		add_settings_field( 'message', __( 'Blocked Message', 'ban-hammer' ), array( &$this, 'message_callback'), 'ban-hammer-settings', 'banhammer-settings' );
+		add_settings_field( 'redirect', __( 'Redirect Blocked Users?', 'ban-hammer' ), array( &$this, 'redirect_callback'), 'ban-hammer-settings', 'banhammer-settings' );
+		add_settings_field( 'blacklist', __( 'The Blacklist', 'ban-hammer' ), array( &$this, 'blacklist_callback'), 'ban-hammer-settings', 'banhammer-settings' );
 	}
 
 	/**
@@ -297,9 +296,7 @@ class BanHammer {
 	 * @since 2.6
 	 */
 	function banhammer_settings_callback() {
-	    ?>
-	    <p><?php _e('Customize your Ban Hammer experience via the settings below.', 'ban-hammer'); ?></p>
-	    <?php
+		?><p><?php _e( 'Customize your Ban Hammer experience via the settings below.', 'ban-hammer' ); ?></p><?php
 	}
 
 	/**
@@ -315,10 +312,10 @@ class BanHammer {
 		}
 
 		?>
-			<p><?php _e('The terms below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), and partials (i.e. viagra). Wildcards (i.e. *) will not work.', 'ban-hammer'); ?></p>			
-			<p><textarea name="banhammer_options[blacklist]" id="banhammer_options[blacklist]" cols="40" rows="15"><?php
-				echo esc_textarea($blacklist);
-			?></textarea></p>
+		<p><?php _e( 'The terms below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), and partials (i.e. viagra). Wildcards (i.e. *) will not work.', 'ban-hammer' ); ?></p>	
+		<p><textarea name="banhammer_options[blacklist]" id="banhammer_options[blacklist]" cols="40" rows="15"><?php
+			echo esc_textarea($blacklist);
+		?></textarea></p>
 		<?php
 	}
 
@@ -329,8 +326,8 @@ class BanHammer {
 	 */
 	function message_callback() {
 		?>
-			<p><?php _e( 'The message below is displayed to users who are not allowed to register on your blog. Edit is as you see fit, but remember you don\'t get a lot of space so keep it simple.', 'ban-hammer' ); ?></p>
-			<p><textarea name="banhammer_options[message]" id="banhammer_options[message]" cols="80" rows="2"><?php echo esc_html( $this->options['message'] ); ?></textarea></p>
+		<p><?php _e( 'The message below is displayed to users who are not allowed to register on your blog. Edit is as you see fit, but remember you don\'t get a lot of space so keep it simple.', 'ban-hammer' ); ?></p>
+		<p><textarea name="banhammer_options[message]" id="banhammer_options[message]" cols="80" rows="2"><?php echo esc_html( $this->options['message'] ); ?></textarea></p>
 		<?php
 	}
 
@@ -364,13 +361,12 @@ class BanHammer {
 	 */
 	function options() { 
 		?>
-
 		<div class="wrap">
-			
+	
 		<h1><?php _e( 'Ban Hammer', 'ban-hammer' ); ?></h1>
-		
+
 		<?php settings_errors();
-		
+
 			if ( is_network_admin() ) {
 				?><form method="post" width='1'><?php
 					wp_nonce_field( 'banhammer_networksave' ); 
@@ -378,10 +374,9 @@ class BanHammer {
 				?><form action="options.php" method="POST" ><?php
 					settings_fields('ban-hammer');
 			}
-				do_settings_sections( 'ban-hammer-settings' );
-				submit_button( '', 'primary', 'update');
-			    
-			    ?></form>
+					do_settings_sections( 'ban-hammer-settings' );
+					submit_button( '', 'primary', 'update');
+				?></form>
 		</div>
 		<?php
 	}
@@ -393,17 +388,17 @@ class BanHammer {
 	 * @since 2.6
 	 */
 	function banhammer_sanitize( $input ) {
-		
+
 		$options = $this->options;
 		$input['db_version'] = $this->db_version;
-				
+
 		// Message
 		if( $input['message'] !== $options['message'] && $input['message'] == wp_kses_post( $input['message'] ) ) {
 			$input['message'] = wp_kses_post( $input['message'] );
 		} else {
 			$input['message'] = $options['message'];
 		}
-		
+
 		// Blacklist
 		if( empty( $input['blacklist'] ) ) {
 			update_option( 'blacklist_keys', '' );
@@ -413,24 +408,24 @@ class BanHammer {
 			$new_blacklist = array_unique( $new_blacklist );
 			foreach( $new_blacklist as &$keyname ) {
 				$keyname = sanitize_text_field( $keyname );
-			}	
+			}
 			$new_blacklist = implode( "\n", $new_blacklist );
 			update_option('blacklist_keys', $new_blacklist);
 		}
-        unset( $input['blacklist'] );
+		unset( $input['blacklist'] );
 
-		// Redirect		
+		// Redirect
 		if ( !isset($input['redirect']) || is_null( $input['redirect'] ) || $input['redirect'] == '0' ) {
 			$input['redirect'] = 'no';
 		} else {
 			$input['redirect'] = 'yes';
 		}
-		
+
 		// Redirect URL
 		if ( isset($input['redirect_url']) && $input['redirect_url'] !== $options['redirect_url'] ) {
 			$input['redirect_url'] = esc_url( $input['redirect_url'] );;
 		} else {
-			$input['redirect_url'] = $options['redirect_url'];		
+			$input['redirect_url'] = $options['redirect_url'];
 		}
 
 		return $input;
@@ -444,7 +439,7 @@ class BanHammer {
 	 * @since 1.0
 	 * @access public
 	 */
-	public function banhammer_drop($user_login, $user_email, $errors) {
+	public function banhammer_drop( $user_login, $user_email, $errors ) {
 		if( is_multisite() ) {
 			$the_blacklist = get_site_option( 'banhammer_keys' );
 		} else {
@@ -459,7 +454,7 @@ class BanHammer {
 		for($i = 0; $i < $blacklist_size; $i++) {
 			$blacklist_current = trim($blacklist_array[$i]);
 			if( stripos($user_email, $blacklist_current) !== false ) {
-				
+
 				$errors->add( 'invalid_email', __( $this->options['message'] ));
 				if ( $this->options['redirect'] == 'yes' ) {
 					wp_redirect( $this->options['redirect_url'] );
@@ -479,7 +474,7 @@ class BanHammer {
 	 * @access public
 	 */
 	public function wpmu_validation($result) {
-		if( $this->banhammer_drop( $_POST['user_name'], $_POST['user_email'], $result['errors'] ) )
+		if( $this->banhammer_drop( sanitize_user( $_POST['user_name'] ), sanitize_email( $_POST['user_email'] ), $result['errors'] ) )
 			$result['errors']->add( 'user_email', $this->options['message'] );
 		return $result;
 	}
@@ -492,8 +487,8 @@ class BanHammer {
 	 * @access public
 	 */
 	public function donate_link($links, $file) {
-			if( $file == plugin_basename(__FILE__)) {
-					$donate_link = '<a href="https://ko-fi.com/A236CENl/">'.__("Donate", "ban-hammer").'</a>';
+			if( $file == plugin_basename( __FILE__ ) ) {
+					$donate_link = '<a href="https://ko-fi.com/A236CENl/">'. __( 'Donate', 'ban-hammer' ) .'</a>';
 					$links[] = $donate_link;
 			}
 			return $links;
@@ -514,8 +509,8 @@ class BanHammer {
 		}
 
 		$settings_link = '<a href="'.$settings_link.'">'.__("Settings", "ban-hammer").'</a>';
+		if ( user_can( get_current_user_id(), 'moderate_comments' ) ) array_unshift($links, $settings_link);
 
-		array_unshift($links, $settings_link);
 		return $links;
 	}
 
