@@ -10,4 +10,4 @@ Ban Hammer
 
 * [Plugin Site](http://halfelf.org/plugins/ban-hammer/)
 * [Basic Support](http://wordpress.org/support/plugin/ban-hammer)
-* [Donate](https://ko-fi.com/A236CENl/)
+* [Donate](https://ko-fi.com/A236CEN/)

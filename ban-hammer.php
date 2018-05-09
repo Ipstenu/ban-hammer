@@ -488,7 +488,7 @@ class BanHammer {
 	 */
 	public function donate_link($links, $file) {
 			if( $file == plugin_basename( __FILE__ ) ) {
-					$donate_link = '<a href="https://ko-fi.com/A236CENl/">'. __( 'Donate', 'ban-hammer' ) .'</a>';
+					$donate_link = '<a href="https://ko-fi.com/A236CEN/">'. __( 'Donate', 'ban-hammer' ) .'</a>';
 					$links[] = $donate_link;
 			}
 			return $links;
