@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ruleset name="HalfElf Coding Standards">
+    <description>A custom ruleset to take in account both WordPress and HalfElf standards.</description>
+    <rule ref="WordPress-Extra">
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+        <exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
+        <exclude name="WordPress.WP.EnqueuedResources.NonEnqueuedScript" />
+        <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_get_contents" />
+    </rule>
+</ruleset>

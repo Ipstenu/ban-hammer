@@ -3,7 +3,7 @@ Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 4.0
 Tested up to: 5.0
-Stable tag: 2.6.1
+Stable tag: 2.6.2
 Donate Link: https://ko-fi.com/A236CEN/
 License: GPLv2
 
@@ -15,7 +15,7 @@ We've all had this problem: a group of spammers from `mail.ru` are registering t
 
 Ban Hammer helps you do that by preventing unwanted users from registering.
 
-On a single install of WordPress, instead of using its own database table, Ban Hammer pulls from your list of prohibited emails from the Comment Blacklist feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them. 
+On a single install of WordPress, instead of using its own database table, Ban Hammer pulls from your list of prohibited emails from the Comment Blacklist feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them.
 
 On a network instance, there's a network wide setting for banned emails and domains. This means you only have <em>one</em> place to update and maintain your blocked list.  When a listed user attempts to register, they get a customizable message that they cannot register.
 
@@ -36,6 +36,11 @@ Ban Hammer is a very weird fork of [Philippe Paquet's No Disposable Email plugin
 Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for StopForumSpam integration. MASSIVE credit to Travis Hamera for the StopForumSpam/cURL fix! And then props to Helen Hou-Sandí for not using curl at all. Protip? Use <a href="http://planetozh.com/blog/2009/08/how-to-make-http-requests-with-wordpress/">WP_http</a> instead!
 
 ==Changelog==
+
+= 2.6.1 =
+* December 2018 by Ipstenu
+* PHPCS checks
+* Check for WooCommece
 
 = 2.6.1 =
 * January 2018 by Ipstenu
