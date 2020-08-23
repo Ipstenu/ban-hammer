@@ -2,14 +2,14 @@
 /*
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
-Description:Prevent people from registering with any email you list.
-Version: 2.6.2
+Description: Prevent people from registering with any email you list.
+Version: 2.7
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
 Text Domain: ban-hammer
 
-Copyright 2009-19 Mika Epstein (email: ipstenu@halfelf.org)
+Copyright 2009-20 Mika Epstein (email: ipstenu@halfelf.org)
 
 	This file is part of Ban Hammer, a plugin for WordPress.
 
@@ -39,13 +39,14 @@ class BanHammer {
 	// Holds option data.
 	public $option_name = 'banhammer_options';
 	public $option_defaults;
+	public $options;
 
 	// DB version, for schema upgrades.
 	public $db_version = 1;
 
 	// Constants
 	public $buddypress;
-	public $blacklist;
+	public $bannedlist;
 
 	// Instance
 	public static $instance;
@@ -77,16 +78,18 @@ class BanHammer {
 			'db_version'   => $this->db_version,
 			'redirect'     => 'no',
 			'redirect_url' => 'http://example.com',
-			'message'      => '<strong>ERROR</strong>: Your email has been banned from registration.',
+			'message'      => __( '<strong>ERROR</strong>: Your email has been banned from registration.', 'ban-hammer' ),
 		);
 
 		// Fetch and set up options.
 		$this->options = wp_parse_args( get_site_option( $this->option_name ), $this->option_defaults, false );
 
 		if ( is_multisite() ) {
-			$this->blacklist = get_site_option( 'banhammer_keys', 'spammer@example.com', false );
+			$this->bannedlist = get_site_option( 'banhammer_keys', 'spammer@example.com', false );
+		} elseif ( false !== get_option( 'disallowed_keys' ) ) {
+			$this->bannedlist = get_option( 'disallowed_keys' );
 		} else {
-			$this->blacklist = get_option( 'blacklist_keys' );
+			$this->bannedlist = get_option( 'blacklist_keys' );
 		}
 
 		// check if DB needs to be upgraded (this will merge old settings to new)
@@ -229,8 +232,9 @@ class BanHammer {
 		if ( 'settings_page_ban-hammer-network' === $current_screen->id ) {
 
 			if ( isset( $_POST['update'] ) && check_admin_referer( 'banhammer_networksave' ) ) {
-				$options              = $this->options;
-				$input                = $_POST['banhammer_options'];
+				$options = $this->options;
+				$input   = $_POST['banhammer_options']; // phpcs:ignore - Sanitized further down.
+				// This is hardcoded for a reason.
 				$output['db_version'] = $this->db_version;
 
 				// Message
@@ -240,20 +244,20 @@ class BanHammer {
 					$output['message'] = $options['message'];
 				}
 
-				// Blacklist
-				if ( empty( $input['blacklist'] ) ) {
+				// bannedlist
+				if ( empty( $input['bannedlist'] ) ) {
 					update_site_option( 'banhammer_keys', '' );
-				} elseif ( $input['blacklist'] !== $this->blacklist ) {
-					$new_blacklist = explode( "\n", $input['blacklist'] );
-					$new_blacklist = array_filter( array_map( 'trim', $new_blacklist ) );
-					$new_blacklist = array_unique( $new_blacklist );
-					foreach ( $new_blacklist as &$keyname ) {
+				} elseif ( $input['bannedlist'] !== $this->bannedlist ) {
+					$new_bannedlist = explode( "\n", $input['bannedlist'] );
+					$new_bannedlist = array_filter( array_map( 'trim', $new_bannedlist ) );
+					$new_bannedlist = array_unique( $new_bannedlist );
+					foreach ( $new_bannedlist as &$keyname ) {
 						$keyname = sanitize_text_field( $keyname );
 					}
-					$new_blacklist = implode( "\n", $new_blacklist );
-					update_site_option( 'banhammer_keys', $new_blacklist );
+					$new_bannedlist = implode( "\n", $new_bannedlist );
+					update_site_option( 'banhammer_keys', $new_bannedlist );
 				}
-				unset( $input['blacklist'] );
+				unset( $input['bannedlist'] );
 
 				// Redirect
 				if ( ! isset( $input['redirect'] ) || is_null( $input['redirect'] ) || '0' === $input['redirect'] ) {
@@ -293,7 +297,7 @@ class BanHammer {
 		// The Fields
 		add_settings_field( 'message', __( 'Blocked Message', 'ban-hammer' ), array( &$this, 'message_callback' ), 'ban-hammer-settings', 'banhammer-settings' );
 		add_settings_field( 'redirect', __( 'Redirect Blocked Users?', 'ban-hammer' ), array( &$this, 'redirect_callback' ), 'ban-hammer-settings', 'banhammer-settings' );
-		add_settings_field( 'blacklist', __( 'The Blacklist', 'ban-hammer' ), array( &$this, 'blacklist_callback' ), 'ban-hammer-settings', 'banhammer-settings' );
+		add_settings_field( 'bannedlist', __( 'The Blocked List', 'ban-hammer' ), array( &$this, 'bannedlist_callback' ), 'ban-hammer-settings', 'banhammer-settings' );
 	}
 
 	/**
@@ -308,20 +312,14 @@ class BanHammer {
 	}
 
 	/**
-	 * The Blacklist Callback
+	 * The Banned List Callback
 	 *
 	 * @since 2.6
 	 */
-	public function blacklist_callback() {
-		if ( is_multisite() ) {
-			$blacklist = get_site_option( 'banhammer_keys' );
-		} else {
-			$blacklist = get_option( 'blacklist_keys' );
-		}
-
+	public function bannedlist_callback() {
 		?>
 		<p><?php esc_html_e( 'The terms below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), and partials (i.e. viagra). Wildcards (i.e. *) will not work.', 'ban-hammer' ); ?></p>
-		<p><textarea name="banhammer_options[blacklist]" id="banhammer_options[blacklist]" cols="40" rows="15"><?php echo esc_textarea( $blacklist ); ?></textarea></p>
+		<p><textarea name="banhammer_options[bannedlist]" id="banhammer_options[bannedlist]" cols="40" rows="15"><?php echo esc_textarea( $this->bannedlist ); ?></textarea></p>
 		<?php
 	}
 
@@ -400,8 +398,10 @@ class BanHammer {
 	 * @since 2.6
 	 */
 	public function banhammer_sanitize( $input ) {
+		// Get current options
+		$options = $this->options;
 
-		$options             = $this->options;
+		// Hardcoding becuase it's always this.
 		$input['db_version'] = $this->db_version;
 
 		// Message
@@ -411,20 +411,20 @@ class BanHammer {
 			$input['message'] = $options['message'];
 		}
 
-		// Blacklist
-		if ( empty( $input['blacklist'] ) ) {
-			update_option( 'blacklist_keys', '' );
-		} elseif ( $input['blacklist'] !== $this->blacklist ) {
-			$new_blacklist = explode( "\n", $input['blacklist'] );
-			$new_blacklist = array_filter( array_map( 'trim', $new_blacklist ) );
-			$new_blacklist = array_unique( $new_blacklist );
-			foreach ( $new_blacklist as &$keyname ) {
+		// bannedlist
+		if ( empty( $input['bannedlist'] ) ) {
+			update_option( 'bannedlist_keys', '' );
+		} elseif ( $input['bannedlist'] !== $this->bannedlist ) {
+			$new_bannedlist = explode( "\n", $input['bannedlist'] );
+			$new_bannedlist = array_filter( array_map( 'trim', $new_bannedlist ) );
+			$new_bannedlist = array_unique( $new_bannedlist );
+			foreach ( $new_bannedlist as &$keyname ) {
 				$keyname = sanitize_text_field( $keyname );
 			}
-			$new_blacklist = implode( "\n", $new_blacklist );
-			update_option( 'blacklist_keys', $new_blacklist );
+			$new_bannedlist = implode( "\n", $new_bannedlist );
+			update_option( 'bannedlist_keys', $new_bannedlist );
 		}
-		unset( $input['blacklist'] );
+		unset( $input['bannedlist'] );
 
 		// Redirect
 		if ( ! isset( $input['redirect'] ) || is_null( $input['redirect'] ) || '0' === $input['redirect'] ) {
@@ -452,20 +452,14 @@ class BanHammer {
 	 * @access public
 	 */
 	public function banhammer_drop( $user_login, $user_email, $errors ) {
-		if ( is_multisite() ) {
-			$the_blacklist = get_site_option( 'banhammer_keys' );
-		} else {
-			$the_blacklist = get_option( 'blacklist_keys' );
-		}
+		$bannedlist_string = $this->bannedlist;
+		$bannedlist_array  = explode( "\n", $bannedlist_string );
+		$bannedlist_size   = count( $bannedlist_array );
 
-		$blacklist_string = $the_blacklist;
-		$blacklist_array  = explode( "\n", $blacklist_string );
-		$blacklist_size   = count( $blacklist_array );
-
-		// Go through blacklist
-		for ( $i = 0; $i < $blacklist_size; $i++ ) {
-			$blacklist_current = trim( $blacklist_array[ $i ] );
-			if ( stripos( $user_email, $blacklist_current ) !== false ) {
+		// Go through bannedlist
+		for ( $i = 0; $i < $bannedlist_size; $i++ ) {
+			$bannedlist_current = trim( $bannedlist_array[ $i ] );
+			if ( stripos( $user_email, $bannedlist_current ) !== false ) {
 
 				$errors->add( 'invalid_email', $this->options['message'] );
 				if ( 'yes' === $this->options['redirect'] ) {

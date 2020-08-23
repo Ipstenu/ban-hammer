@@ -2,8 +2,8 @@
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 4.0
-Tested up to: 5.4
-Stable tag: 2.6.2
+Tested up to: 5.5
+Stable tag: 2.7
 Donate Link: https://ko-fi.com/A236CEN/
 License: GPLv2
 
@@ -37,24 +37,10 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ==Changelog==
 
-= 2.6.1 =
-* December 2018 by Ipstenu
-* PHPCS checks
-* Check for WooCommece
-
-= 2.6.1 =
-* January 2018 by Ipstenu
-* Formatting changes
-* Stopped non-admins from seeing settings links and notifications
-
-= 2.6 =
-* February 2017 by Ipstenu
-* Allow redirection to custom URLs on failed login.
-* Move plugin to Settings API
-* Combine options
-* Fixed BuddyPress
-* Optimized multisite
-* Removed check for WP 3.4 (only 4.0 and up get updates anyway)
+= 2.7 =
+* August 2020 by Ipstenu
+* Compatibility with 5.5
+* Corrected deprecation of blacklist_keys (it still falls back for older WP)
 
 == Upgrade Notice ==
 Version 2.6 is a major update. You MAY need to reset your error messages in some situations.

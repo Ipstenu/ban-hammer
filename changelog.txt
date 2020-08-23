@@ -1,3 +1,23 @@
+
+= 2.6.2 =
+* December 2018 by Ipstenu
+* PHPCS checks
+* Check for WooCommece
+
+= 2.6.1 =
+* January 2018 by Ipstenu
+* Formatting changes
+* Stopped non-admins from seeing settings links and notifications
+
+= 2.6 =
+* February 2017 by Ipstenu
+* Allow redirection to custom URLs on failed login.
+* Move plugin to Settings API
+* Combine options
+* Fixed BuddyPress
+* Optimized multisite
+* Removed check for WP 3.4 (only 4.0 and up get updates anyway)
+
 = 2.5.4 =
 * 27 April 2015 by Ipstenu
 * Changing priority to take precedence over other plugins that set new users to require approval.
