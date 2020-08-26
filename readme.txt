@@ -1,13 +1,13 @@
 === Ban Hammer ===
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
-Requires at least: 4.0
+Requires at least: 5.5
 Tested up to: 5.5
 Stable tag: 2.7
 Donate Link: https://ko-fi.com/A236CEN/
 License: GPLv2
 
-Prevent people from registering via your comment moderation blacklist.
+Prevent people from registering via your disallowed comment keys.
 
 == Description ==
 
@@ -15,7 +15,7 @@ We've all had this problem: a group of spammers from `mail.ru` are registering t
 
 Ban Hammer helps you do that by preventing unwanted users from registering.
 
-On a single install of WordPress, instead of using its own database table, Ban Hammer pulls from your list of prohibited emails from the Comment Blacklist feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them.
+On a single install of WordPress, instead of using its own database table, Ban Hammer pulls from your list of prohibited emails from the Disallowed Comment Keys feature, native to WordPress.  Since emails never equal IP addresses, it simply skips over and ignores them.
 
 On a network instance, there's a network wide setting for banned emails and domains. This means you only have <em>one</em> place to update and maintain your blocked list.  When a listed user attempts to register, they get a customizable message that they cannot register.
 
@@ -42,8 +42,6 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 * Compatibility with 5.5
 * Corrected deprecation of blacklist_keys (it still falls back for older WP)
 
-== Upgrade Notice ==
-Version 2.6 is a major update. You MAY need to reset your error messages in some situations.
 
 == Installation ==
 
@@ -65,13 +63,13 @@ After installation, go to **Network Admin > Settings > Ban Hammer** to customize
 
 == Frequently Asked Questions ==
 
-= If I change the blacklist via Ban Hammer, will it change the Comment Blacklist? =
+= If I change the Blocklist via Ban Hammer, will it change the Disallowed Comment Keys? =
 
 On **single site installs**, yes. They are the exact same list, they use the same fields and they update the same data. The only reason I put it there was I felt having an all-in-one place to get the data would be better.
 
 = Does this list the rejected registers? =
 
-No. Since WordPress doesn't list rejected comments (your blacklist goes to a blackhole), the rejected users are similarly lost forever.
+No. Since WordPress itself doesn't list rejected comments, the rejected users are similarly lost forever.
 
 = Where did Stop Forum Spam go? =
 
@@ -79,7 +77,7 @@ This plugin no longer uses Stop Forum Spam. If you need that feature, please use
 
 = Does this work on MultiSite? =
 
-Yes it does, but a little differently If you're using multisite, instead of pulling from the comment blacklist (which is per site), you have a separate list off Network Admin -> Settings. This is because you only want to have the network admins determining who can register on the network.
+Yes it does, but a little differently If you're using multisite, instead of pulling from the Disallowed Comment Keys (which is per site), you have a separate list off Network Admin -> Settings. This is because you only want to have the network admins determining who can register on the network.
 
 = Does this work on BuddyPress? =
 

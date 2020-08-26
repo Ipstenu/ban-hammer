@@ -234,6 +234,7 @@ class BanHammer {
 			if ( isset( $_POST['update'] ) && check_admin_referer( 'banhammer_networksave' ) ) {
 				$options = $this->options;
 				$input   = $_POST['banhammer_options']; // phpcs:ignore - Sanitized further down.
+
 				// This is hardcoded for a reason.
 				$output['db_version'] = $this->db_version;
 
