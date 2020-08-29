@@ -3,7 +3,7 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: Prevent people from registering with any email you list.
-Version: 2.7
+Version: 2.7.1
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
@@ -414,7 +414,7 @@ class BanHammer {
 
 		// bannedlist
 		if ( empty( $input['bannedlist'] ) ) {
-			update_option( 'bannedlist_keys', '' );
+			update_option( 'disallowed_keys', '' );
 		} elseif ( $input['bannedlist'] !== $this->bannedlist ) {
 			$new_bannedlist = explode( "\n", $input['bannedlist'] );
 			$new_bannedlist = array_filter( array_map( 'trim', $new_bannedlist ) );
@@ -423,7 +423,7 @@ class BanHammer {
 				$keyname = sanitize_text_field( $keyname );
 			}
 			$new_bannedlist = implode( "\n", $new_bannedlist );
-			update_option( 'bannedlist_keys', $new_bannedlist );
+			update_option( 'disallowed_keys', $new_bannedlist );
 		}
 		unset( $input['bannedlist'] );
 
