@@ -37,6 +37,10 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ==Changelog==
 
+= 2.7.1 =
+* August 2020 by Ipstenu
+* Typo fixed. Saving works. My bad!
+
 = 2.7 =
 * August 2020 by Ipstenu
 * Compatibility with 5.5
