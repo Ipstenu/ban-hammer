@@ -3,13 +3,13 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: Prevent people from registering with any email you list.
-Version: 2.7.1
+Version: 2.8
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
 Text Domain: ban-hammer
 
-Copyright 2009-20 Mika Epstein (email: ipstenu@halfelf.org)
+Copyright 2009-21 Mika Epstein (email: ipstenu@halfelf.org)
 
 	This file is part of Ban Hammer, a plugin for WordPress.
 
@@ -153,18 +153,9 @@ class BanHammer {
 		// Register Settings
 		$this->register_settings();
 
-		// Warn if Registration isn't active
-		// WooCommerce is special here...
-		if ( ! get_option( 'users_can_register' ) && user_can( get_current_user_id(), 'moderate_comments' ) && ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			$this->notice_message = __( 'Registration is disabled. Ban Hammer will not work.', 'ban-hammer' );
-			$this->notice_class   = 'warning';
-
-			if ( is_multisite() ) {
-				add_action( 'network_admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
-			} else {
-				add_action( 'admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
-			}
-		}
+		// Is Registration Active?
+		// Currently disabled to see if this increases support.
+		// $this->is_registration_active();
 	}
 
 	/**
@@ -199,7 +190,6 @@ class BanHammer {
 
 		update_site_option( $this->option_name, $this->options );
 	}
-
 
 	/**
 	 * Admin Menu
@@ -485,6 +475,49 @@ class BanHammer {
 			$result['errors']->add( 'user_email', $this->options['message'] );
 		}
 		return $result;
+	}
+
+	/**
+	 * Check if registration is active
+	 *
+	 * @since 2.8
+	 * @access public
+	 */
+	public function is_registration_active() {
+
+		// List of functions for plugins that don't really use the registration
+		// form, default to WP:
+		$has_special_plugin = false;
+		$special_plugins    = array(
+			'is_woocommerce_activated',      // WooCommerce
+			'wpforo_load_plugin_textdomain', // WPForo
+			'gf_user_registration',          // Gravity Forms: User Registration
+
+		);
+
+		// Loop through the functions, if they exist, we skip.
+		foreach ( $special_plugins as $this_plugin ) {
+			if ( ! $has_special_plugin && function_exists( $this_plugin ) ) {
+				$has_special_plugin = true;
+			}
+		}
+
+		// Filter so other people can get around this.
+		// If you want to skip it, it's:
+		// add_filter( 'ban_hammer_alt_registration', true );
+		$alt_registration = apply_filters( 'ban_hammer_alt_registration', $has_special_plugin );
+
+		// Warn if Registration isn't active or certain plugins are active
+		if ( ! get_option( 'users_can_register' ) && user_can( get_current_user_id(), 'moderate_comments' ) && ! $alt_registration ) {
+			$this->notice_message = __( 'Ban Hammer requires standard WordPress registration to be enabled.', 'ban-hammer' );
+			$this->notice_class   = 'warning';
+
+			if ( is_multisite() ) {
+				add_action( 'network_admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
+			} else {
+				add_action( 'admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
+			}
+		}
 	}
 
 	/**

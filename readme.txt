@@ -2,8 +2,8 @@
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 5.5
-Tested up to: 5.6
-Stable tag: 2.7.1
+Tested up to: 5.7
+Stable tag: 2.8
 Donate Link: https://ko-fi.com/A236CEN/
 License: GPLv2
 
@@ -37,19 +37,13 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ==Changelog==
 
-= 2.7.1 =
-* August 2020 by Ipstenu
-* Typo fixed. Saving works. My bad!
-
-= 2.7 =
-* August 2020 by Ipstenu
-* Compatibility with 5.5
-* Corrected deprecation of blacklist_keys (it still falls back for older WP)
-
+= 2.8 =
+* February 2021 by Ipstenu
+* Removing check for if registration is active
 
 == Installation ==
 
-<strong>Single Install</strong>
+<strong>Single Site (Traditional) Install</strong>
 
 After installation, go to **Tools > Ban Hammer** to customize the error message (and banned emails, but it's the same list from your comment moderation so...).
 
@@ -81,11 +75,11 @@ This plugin no longer uses Stop Forum Spam. If you need that feature, please use
 
 = Does this work on MultiSite? =
 
-Yes it does, but a little differently If you're using multisite, instead of pulling from the Disallowed Comment Keys (which is per site), you have a separate list off Network Admin -> Settings. This is because you only want to have the network admins determining who can register on the network.
+Yes it does, but a little differently. If you're using multisite, instead of pulling from the Disallowed Comment Keys (which is per site), you have a separate list off Network Admin -> Settings. This is because you only want to have the network admins determining who can register on the network.
 
 = Does this work on BuddyPress? =
 
-Currently yes.
+I believe so.
 
 = Does this work on WooCommerce? =
 

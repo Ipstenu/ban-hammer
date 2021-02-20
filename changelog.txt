@@ -1,8 +1,16 @@
+= 2.7.1 =
+* August 2020 by Ipstenu
+* Typo fixed. Saving works. My bad!
+
+= 2.7 =
+* August 2020 by Ipstenu
+* Compatibility with 5.5
+* Corrected deprecation of blacklist_keys (it still falls back for older WP)
 
 = 2.6.2 =
 * December 2018 by Ipstenu
 * PHPCS checks
-* Check for WooCommece
+* Check for WooCommerce
 
 = 2.6.1 =
 * January 2018 by Ipstenu
