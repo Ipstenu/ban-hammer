@@ -9,7 +9,7 @@ Author URI: http://halfelf.org/
 Network: true
 Text Domain: ban-hammer
 
-Copyright 2009-20 Mika Epstein (email: ipstenu@halfelf.org)
+Copyright 2009-21 Mika Epstein (email: ipstenu@halfelf.org)
 
 	This file is part of Ban Hammer, a plugin for WordPress.
 
@@ -75,6 +75,21 @@ class BanHammer {
 			'redirect_url' => 'http://example.com',
 			'message'      => __( '<strong>ERROR</strong>: Your email has been banned from registration.', 'ban-hammer' ),
 		);
+	}
+
+	/**
+	 * Admin init Callback
+	 *
+	 * @since 2.6
+	 */
+	public function admin_init() {
+
+		// Links to Plugin Details.
+		add_filter( 'plugin_row_meta', array( &$this, 'plugin_links' ), 10, 2 );
+		$plugin = plugin_basename( __FILE__ );
+
+		// Register Settings
+		$this->register_settings();
 	}
 
 	/**
@@ -146,35 +161,6 @@ class BanHammer {
 	}
 
 	/**
-	 * Admin init Callback
-	 *
-	 * @since 2.6
-	 */
-	public function admin_init() {
-
-		// Settings links
-		add_filter( 'plugin_row_meta', array( &$this, 'donate_link' ), 10, 2 );
-		$plugin = plugin_basename( __FILE__ );
-		add_filter( 'plugin_action_links_$plugin', array( &$this, 'settings_link' ) );
-
-		// Register Settings
-		$this->register_settings();
-
-		// Warn if Registration isn't active
-		// WooCommerce is special here...
-		if ( ! get_option( 'users_can_register' ) && user_can( get_current_user_id(), 'moderate_comments' ) && ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			$this->notice_message = __( 'Registration is disabled. Ban Hammer will not work.', 'ban-hammer' );
-			$this->notice_class   = 'warning';
-
-			if ( is_multisite() ) {
-				add_action( 'network_admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
-			} else {
-				add_action( 'admin_notices', array( &$this, 'admin_notices' ), 10, 2 );
-			}
-		}
-	}
-
-	/**
 	 * Admin Notices
 	 *
 	 * Display admin notices as needed.
@@ -207,7 +193,6 @@ class BanHammer {
 		update_site_option( $this->option_name, $this->options );
 	}
 
-
 	/**
 	 * Admin Menu
 	 *
@@ -233,7 +218,6 @@ class BanHammer {
 	 *
 	 * @since 3.0
 	 */
-
 	public function network_admin_screen() {
 		$current_screen = get_current_screen();
 		if ( 'settings_page_ban-hammer-network' === $current_screen->id ) {
@@ -246,12 +230,15 @@ class BanHammer {
 				// This is hardcoded for a reason.
 				$output['db_version'] = $this->db_version;
 
+				// Hardcoding becuase it's always this.
+				$output['db_version'] = $this->db_version;
+
 				// Message
-				if ( $input['message'] !== $options['message'] && wp_kses_post( $input['message'] ) === $input['message'] ) {
-					$output['message'] = wp_kses_post( $input['message'] );
-				} else {
-					$output['message'] = $options['message'];
-				}
+				$output['message'] = ( $input['message'] !== $options['message'] ) ? wp_kses_post( $input['message'] ) : $options['message'];
+
+				// Redirect
+				$output['redirect']     = ( ! isset( $input['redirect'] ) || is_null( $input['redirect'] ) || '0' === $input['redirect'] ) ? 'no' : 'yes';
+				$output['redirect_url'] = ( $input['redirect_url'] !== $options['redirect_url'] ) ? esc_url( $input['redirect_url'] ) : $options['redirect_url'];
 
 				// bannedlist
 				if ( empty( $input['bannedlist'] ) ) {
@@ -267,20 +254,6 @@ class BanHammer {
 					update_site_option( 'banhammer_keys', $new_bannedlist );
 				}
 				unset( $input['bannedlist'] );
-
-				// Redirect
-				if ( ! isset( $input['redirect'] ) || is_null( $input['redirect'] ) || '0' === $input['redirect'] ) {
-					$output['redirect'] = false;
-				} else {
-					$output['redirect'] = true;
-				}
-
-				// Redirect URL
-				if ( isset( $input['redirect_url'] ) && $input['redirect_url'] !== $options['redirect_url'] ) {
-					$output['redirect_url'] = esc_url( $input['redirect_url'] );
-				} else {
-					$output['redirect_url'] = $options['redirect_url'];
-				}
 
 				$this->options = $output;
 				update_site_option( $this->option_name, $output );
@@ -403,9 +376,9 @@ class BanHammer {
 
 	/**
 	 * Options sanitization and validation
-	 *
-	 * @param $input the input to be sanitized
-	 * @since 2.6
+	 * @param  array $input Data submitted
+	 * @return array        Sanitized data
+	 * @since  2.6
 	 */
 	public function banhammer_sanitize( $input ) {
 		// Get current options
@@ -413,16 +386,16 @@ class BanHammer {
 		$keylist = $this->get_keylist();
 
 		// Hardcoding becuase it's always this.
-		$input['db_version'] = $this->db_version;
+		$output['db_version'] = $this->db_version;
 
 		// Message
-		if ( $input['message'] !== $options['message'] && wp_kses_post( $input['message'] === $input['message'] ) ) {
-			$input['message'] = wp_kses_post( $input['message'] );
-		} else {
-			$input['message'] = $options['message'];
-		}
+		$output['message'] = ( $input['message'] !== $options['message'] ) ? wp_kses_post( $input['message'] ) : $options['message'];
 
-		// bannedlist
+		// Redirect
+		$output['redirect']     = ( ! isset( $input['redirect'] ) || is_null( $input['redirect'] ) || '0' === $input['redirect'] ) ? 'no' : 'yes';
+		$output['redirect_url'] = ( $input['redirect_url'] !== $options['redirect_url'] ) ? esc_url( $input['redirect_url'] ) : $options['redirect_url'];
+
+		// Banned List (not saved in the Ban Hammer options)
 		if ( empty( $input['bannedlist'] ) ) {
 			update_option( 'disallowed_keys', '' );
 		} elseif ( $input['bannedlist'] !== $keylist ) {
@@ -435,27 +408,12 @@ class BanHammer {
 			$new_bannedlist = implode( "\n", $new_bannedlist );
 			update_option( 'disallowed_keys', $new_bannedlist );
 		}
-		unset( $input['bannedlist'] );
 
-		// Redirect
-		if ( ! isset( $input['redirect'] ) || is_null( $input['redirect'] ) || '0' === $input['redirect'] ) {
-			$input['redirect'] = 'no';
-		} else {
-			$input['redirect'] = 'yes';
-		}
-
-		// Redirect URL
-		if ( isset( $input['redirect_url'] ) && $input['redirect_url'] !== $options['redirect_url'] ) {
-			$input['redirect_url'] = esc_url( $input['redirect_url'] );
-		} else {
-			$input['redirect_url'] = $options['redirect_url'];
-		}
-
-		return $input;
+		return $output;
 	}
 
 	/**
-	 * Banhammer
+	 * Ban Hammer
 	 *
 	 * Here's the basic plugin for WordPress SANS BuddyPress
 	 *
@@ -498,37 +456,29 @@ class BanHammer {
 	}
 
 	/**
-	 * Donate link
+	 * Plugin links
 	 *
-	 * Adds link to donate on the plugins page
+	 * Adds link to donate and settings on the plugin list page.
 	 *
 	 * @access public
 	 */
-	public function donate_link( $links, $file ) {
+	public function plugin_links( $links, $file ) {
 		if ( plugin_basename( __FILE__ ) === $file ) {
-				$donate_link = '<a href="https://ko-fi.com/A236CEN/">' . __( 'Donate', 'ban-hammer' ) . '</a>';
-				$links[]     = $donate_link;
-		}
-		return $links;
-	}
 
-	/**
-	 * Settings link
-	 *
-	 * Adds link to settings page on the plugins page
-	 *
-	 * @access public
-	 */
-	public function settings_link( $links ) {
-		if ( is_multisite() ) {
-			$settings_link = network_admin_url( 'settings.php?page=ban-hammer' );
-		} else {
-			$settings_link = admin_url( 'tools.php?page=ban-hammer' );
-		}
+			// Determine settings links based on Multisite or not...
+			if ( is_multisite() ) {
+				$settings_url = network_admin_url( 'settings.php?page=ban-hammer' );
+			} else {
+				$settings_url = admin_url( 'tools.php?page=ban-hammer' );
+			}
 
-		$settings_link = '<a href="' . $settings_link . '">' . __( 'Settings', 'ban-hammer' ) . '</a>';
-		if ( user_can( get_current_user_id(), 'moderate_comments' ) ) {
-			array_unshift( $links, $settings_link );
+			// Settings Link:
+			$settings = '<a href="' . $settings_url . '">' . __( 'Settings', 'ban-hammer' ) . '</a>';
+			$links[]  = $settings;
+
+			// Donation Link:
+			$donate  = '<a href="https://ko-fi.com/A236CEN/">' . __( 'Donate', 'ban-hammer' ) . '</a>';
+			$links[] = $donate;
 		}
 
 		return $links;
