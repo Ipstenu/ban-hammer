@@ -3,7 +3,7 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: Prevent people from registering with any email you list.
-Version: 2.7.1
+Version: 3.0
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
@@ -39,14 +39,9 @@ class BanHammer {
 	// Holds option data.
 	public $option_name = 'banhammer_options';
 	public $option_defaults;
-	public $options;
 
 	// DB version, for schema upgrades.
 	public $db_version = 1;
-
-	// Constants
-	public $buddypress;
-	public $bannedlist;
 
 	// Instance
 	public static $instance;
@@ -80,29 +75,6 @@ class BanHammer {
 			'redirect_url' => 'http://example.com',
 			'message'      => __( '<strong>ERROR</strong>: Your email has been banned from registration.', 'ban-hammer' ),
 		);
-
-		// Fetch and set up options.
-		$this->options = wp_parse_args( get_site_option( $this->option_name ), $this->option_defaults, false );
-
-		if ( is_multisite() ) {
-			$this->bannedlist = get_site_option( 'banhammer_keys', 'spammer@example.com', false );
-		} elseif ( false !== get_option( 'disallowed_keys' ) ) {
-			$this->bannedlist = get_option( 'disallowed_keys' );
-		} else {
-			$this->bannedlist = get_option( 'blacklist_keys' );
-		}
-
-		// check if DB needs to be upgraded (this will merge old settings to new)
-		$naked_options = get_site_option( $this->option_name );
-
-		if ( ! isset( $naked_options['db_version'] ) || $naked_options['db_version'] < $this->db_version ) {
-			if ( isset( $old_b_message ) && ! is_null( $old_b_message ) ) {
-				$current_db_version = 0;
-			} else {
-				$current_db_version = isset( $naked_options['db_version'] ) ? $naked_options['db_version'] : 0;
-			}
-			$this->upgrade( $current_db_version );
-		}
 	}
 
 	/**
@@ -123,6 +95,41 @@ class BanHammer {
 
 		// The magic sauce
 		add_action( 'register_post', array( &$this, 'banhammer_drop' ), 1, 3 );
+	}
+
+	public function get_options() {
+		// Fetch and set up options.
+		$options = wp_parse_args( get_site_option( $this->option_name ), $this->option_defaults, false );
+
+		// check if DB needs to be upgraded (this will merge old settings to new)
+		$naked_options = get_site_option( $this->option_name );
+
+		if ( ! isset( $naked_options['db_version'] ) || $naked_options['db_version'] < $this->db_version ) {
+			if ( isset( $old_b_message ) && ! is_null( $old_b_message ) ) {
+				$current_db_version = 0;
+			} else {
+				$current_db_version = isset( $naked_options['db_version'] ) ? $naked_options['db_version'] : 0;
+			}
+			$this->upgrade( $current_db_version );
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Get Keylist
+	 *
+	 * @since 3.0
+	 * @return string - list of blocked/disallowed keys.
+	 */
+	public function get_keylist() {
+		if ( is_multisite() ) {
+			$keylist = get_site_option( 'banhammer_keys', 'spammer@example.com', false );
+		} else {
+			$keylist = get_option( 'disallowed_keys' );
+		}
+
+		return $keylist;
 	}
 
 	/**
@@ -234,6 +241,7 @@ class BanHammer {
 			if ( isset( $_POST['update'] ) && check_admin_referer( 'banhammer_networksave' ) ) {
 				$options = $this->options;
 				$input   = $_POST['banhammer_options']; // phpcs:ignore - Sanitized further down.
+				$keylist = $this->get_keylist();
 
 				// This is hardcoded for a reason.
 				$output['db_version'] = $this->db_version;
@@ -248,7 +256,7 @@ class BanHammer {
 				// bannedlist
 				if ( empty( $input['bannedlist'] ) ) {
 					update_site_option( 'banhammer_keys', '' );
-				} elseif ( $input['bannedlist'] !== $this->bannedlist ) {
+				} elseif ( $input['bannedlist'] !== $keylist ) {
 					$new_bannedlist = explode( "\n", $input['bannedlist'] );
 					$new_bannedlist = array_filter( array_map( 'trim', $new_bannedlist ) );
 					$new_bannedlist = array_unique( $new_bannedlist );
@@ -318,9 +326,10 @@ class BanHammer {
 	 * @since 2.6
 	 */
 	public function bannedlist_callback() {
+		$keylist = $this->get_keylist();
 		?>
 		<p><?php esc_html_e( 'The terms below will not be allowed to be used during registration. You can add in full emails (i.e. foo@example.com) or domains (i.e. @domain.com), and partials (i.e. viagra). Wildcards (i.e. *) will not work.', 'ban-hammer' ); ?></p>
-		<p><textarea name="banhammer_options[bannedlist]" id="banhammer_options[bannedlist]" cols="40" rows="15"><?php echo esc_textarea( $this->bannedlist ); ?></textarea></p>
+		<p><textarea name="banhammer_options[bannedlist]" id="banhammer_options[bannedlist]" cols="40" rows="15"><?php echo esc_textarea( $keylist ); ?></textarea></p>
 		<?php
 	}
 
@@ -400,7 +409,8 @@ class BanHammer {
 	 */
 	public function banhammer_sanitize( $input ) {
 		// Get current options
-		$options = $this->options;
+		$options = $this->get_options();
+		$keylist = $this->get_keylist();
 
 		// Hardcoding becuase it's always this.
 		$input['db_version'] = $this->db_version;
@@ -415,7 +425,7 @@ class BanHammer {
 		// bannedlist
 		if ( empty( $input['bannedlist'] ) ) {
 			update_option( 'disallowed_keys', '' );
-		} elseif ( $input['bannedlist'] !== $this->bannedlist ) {
+		} elseif ( $input['bannedlist'] !== $keylist ) {
 			$new_bannedlist = explode( "\n", $input['bannedlist'] );
 			$new_bannedlist = array_filter( array_map( 'trim', $new_bannedlist ) );
 			$new_bannedlist = array_unique( $new_bannedlist );
@@ -453,7 +463,7 @@ class BanHammer {
 	 * @access public
 	 */
 	public function banhammer_drop( $user_login, $user_email, $errors ) {
-		$bannedlist_string = $this->bannedlist;
+		$bannedlist_string = $this->get_keylist();
 		$bannedlist_array  = explode( "\n", $bannedlist_string );
 		$bannedlist_size   = count( $bannedlist_array );
 
