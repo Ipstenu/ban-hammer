@@ -2,7 +2,7 @@
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 5.5
-Tested up to: 5.7
+Tested up to: 5.8
 Stable tag: 2.8
 Donate Link: https://ko-fi.com/A236CEN/
 License: GPLv2
