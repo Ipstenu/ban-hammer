@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009-18 Mika Epstein (email: ipstenu@halfelf.org)
+ * Copyright 2009-22 Mika Epstein (email: ipstenu@halfelf.org)
  *
  * This file is part of Ban Hammer, a plugin for WordPress.
  */

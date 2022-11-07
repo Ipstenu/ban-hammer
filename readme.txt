@@ -2,8 +2,8 @@
 Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 5.5
-Tested up to: 6.0
-Stable tag: 2.8
+Tested up to: 6.1
+Stable tag: 3.1
 Donate Link: https://ko-fi.com/A236CEN/
 License: GPLv2
 
@@ -37,9 +37,15 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 ==Changelog==
 
-= 2.8 =
-* February 2021 by Ipstenu
-* Removing check for if registration is active
+= 3.1 =
+* November 2022 by Ipstenu
+* Fix issue with saving on PHP 8
+* Removed unnecessary options
+
+= 3.0 =
+* March 2021 by Ipstenu
+* Remove support for WP 5.4 and older (blacklist_keys no longer supported)
+* Remove checks for if registration is active and filters for that
 
 == Installation ==
 
@@ -89,4 +95,4 @@ You have to make your own hook because WooCommerce doesn't use the normal regist
 
 Yes but not wildcards. If you put in `viagra` for example, you will block `viagrajones@gmail.com` _and_ `john@viagra.com` so please use this carefully. If you put in `cookie` then you'll block `cookiemonster@sesamestreet.edu` and everyone would be sad.
 
-If you want to block everyone from all subdomains (like `joe@bar.example.com`) then you can block `.example.com` and that will block all the subdomains.
+If you want to block everyone from all subdomains (like `joe@bar.example.com`) then you can block `.example.com` and that will block all the subdomains. Though you probably want to also do `example.com` in that scenario.

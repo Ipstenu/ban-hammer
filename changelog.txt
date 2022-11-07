@@ -1,3 +1,7 @@
+= 2.8 =
+* February 2021 by Ipstenu
+* Removing check for if registration is active
+
 = 2.7.1 =
 * August 2020 by Ipstenu
 * Typo fixed. Saving works. My bad!
