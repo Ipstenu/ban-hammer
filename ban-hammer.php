@@ -3,13 +3,13 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: Prevent people from registering with any email you list.
-Version: 3.0
+Version: 3.1
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
 Text Domain: ban-hammer
 
-Copyright 2009-21 Mika Epstein (email: ipstenu@halfelf.org)
+Copyright 2009-22 Mika Epstein (email: ipstenu@halfelf.org)
 
 	This file is part of Ban Hammer, a plugin for WordPress.
 
@@ -40,9 +40,6 @@ class BanHammer {
 	public $option_name = 'banhammer_options';
 	public $option_defaults;
 
-	// DB version, for schema upgrades.
-	public $db_version = 1;
-
 	// Instance
 	public static $instance;
 
@@ -70,9 +67,8 @@ class BanHammer {
 
 		// Setting plugin defaults here:
 		$this->option_defaults = array(
-			'db_version'   => $this->db_version,
 			'redirect'     => 'no',
-			'redirect_url' => 'http://example.com',
+			'redirect_url' => 'https://example.com',
 			'message'      => __( '<strong>ERROR</strong>: Your email has been banned from registration.', 'ban-hammer' ),
 		);
 	}
@@ -116,18 +112,7 @@ class BanHammer {
 		// Fetch and set up options.
 		$options = wp_parse_args( get_site_option( $this->option_name ), $this->option_defaults, false );
 
-		// check if DB needs to be upgraded (this will merge old settings to new)
-		$naked_options = get_site_option( $this->option_name );
-
-		if ( ! isset( $naked_options['db_version'] ) || $naked_options['db_version'] < $this->db_version ) {
-			if ( isset( $old_b_message ) && ! is_null( $old_b_message ) ) {
-				$current_db_version = 0;
-			} else {
-				$current_db_version = isset( $naked_options['db_version'] ) ? $naked_options['db_version'] : 0;
-			}
-			$this->upgrade( $current_db_version );
-		}
-
+		// Return
 		return $options;
 	}
 
@@ -224,36 +209,32 @@ class BanHammer {
 
 			if ( isset( $_POST['update'] ) && check_admin_referer( 'banhammer_networksave' ) ) {
 				$options = $this->options;
-				$input   = $_POST['banhammer_options']; // phpcs:ignore - Sanitized further down.
 				$keylist = $this->get_keylist();
 
 				// This is hardcoded for a reason.
 				$output['db_version'] = $this->db_version;
 
-				// Hardcoding becuase it's always this.
+				// Hardcoding because it's always this.
 				$output['db_version'] = $this->db_version;
 
-				// Message
-				$output['message'] = ( $input['message'] !== $options['message'] ) ? wp_kses_post( $input['message'] ) : $options['message'];
+				// Message.
+				$output['message'] = ( $_POST['message'] !== $options['message'] ) ? wp_kses_post( $_POST['message'] ) : $options['message'];
 
-				// Redirect
-				$output['redirect']     = ( ! isset( $input['redirect'] ) || is_null( $input['redirect'] ) || '0' === $input['redirect'] ) ? 'no' : 'yes';
-				$output['redirect_url'] = ( $input['redirect_url'] !== $options['redirect_url'] ) ? esc_url( $input['redirect_url'] ) : $options['redirect_url'];
+				// Redirect.
+				$output['redirect']     = ( ! isset( $_POST['redirect'] ) || is_null( $_POST['redirect'] ) || '0' === $_POST['redirect'] ) ? 'no' : 'yes';
+				$output['redirect_url'] = ( $_POST['redirect_url'] !== $options['redirect_url'] ) ? sanitize_url( $_POST['redirect_url'] ) : $options['redirect_url'];
 
-				// bannedlist
-				if ( empty( $input['bannedlist'] ) ) {
+				// Banned List.
+				if ( empty( $_POST['bannedlist'] ) ) {
 					update_site_option( 'banhammer_keys', '' );
-				} elseif ( $input['bannedlist'] !== $keylist ) {
-					$new_bannedlist = explode( "\n", $input['bannedlist'] );
+				} elseif ( $_POST['bannedlist'] !== $keylist ) {
+					$new_bannedlist = array_map( 'sanitize_text_field', explode( "\n", $_POST['bannedlist'] ) );
 					$new_bannedlist = array_filter( array_map( 'trim', $new_bannedlist ) );
 					$new_bannedlist = array_unique( $new_bannedlist );
-					foreach ( $new_bannedlist as &$keyname ) {
-						$keyname = sanitize_text_field( $keyname );
-					}
 					$new_bannedlist = implode( "\n", $new_bannedlist );
 					update_site_option( 'banhammer_keys', $new_bannedlist );
 				}
-				unset( $input['bannedlist'] );
+				unset( $_POST['bannedlist'] );
 
 				$this->options = $output;
 				update_site_option( $this->option_name, $output );
@@ -312,9 +293,10 @@ class BanHammer {
 	 * @since 2.6
 	 */
 	public function message_callback() {
+		$options = $this->get_options();
 		?>
 		<p><?php esc_html_e( 'The message below is displayed to users who are not allowed to register on your blog. Edit is as you see fit, but remember you don\'t get a lot of space so keep it simple.', 'ban-hammer' ); ?></p>
-		<p><textarea name="banhammer_options[message]" id="banhammer_options[message]" cols="80" rows="2"><?php echo esc_html( $this->options['message'] ); ?></textarea></p>
+		<p><textarea name="banhammer_options[message]" id="banhammer_options[message]" cols="80" rows="2"><?php echo esc_html( $options['message'] ); ?></textarea></p>
 		<?php
 	}
 
@@ -324,15 +306,16 @@ class BanHammer {
 	 * @since 2.6
 	 */
 	public function redirect_callback() {
+		$options = $this->get_options();
 		?>
 		<p><?php esc_html_e( 'If you\'d rather redirect users to a custom URL, please check the box below. If you do, the message above will not show.', 'ban-hammer' ); ?></p>
-		<p><input type="checkbox" id="banhammer_options[redirect]" name="banhammer_options[redirect]" value="yes" <?php checked( $this->options['redirect'], 'yes', true ); ?> <?php checked( $this->options['redirect'], '1', true ); ?> >
+		<p><input type="checkbox" id="banhammer_options[redirect]" name="banhammer_options[redirect]" value="yes" <?php checked( $options['redirect'], 'yes', true ); ?> <?php checked( $options['redirect'], '1', true ); ?> >
 		<label for="banhammer_options[redirect]"><?php esc_html_e( 'Redirect failed logins to a custom URL.', 'ban-hammer' ); ?></label></p>
 
 		<?php
-		if ( isset( $this->options['redirect'] ) && 'no' !== $this->options['redirect'] && ! empty( $this->options['redirect'] ) ) {
+		if ( isset( $options['redirect'] ) && 'no' !== $options['redirect'] && ! empty( $options['redirect'] ) ) {
 			?>
-			<p><textarea name="banhammer_options[redirect_url]" id="banhammer_options[redirect_url]" cols="60" rows="1"><?php echo esc_url( $this->options['redirect_url'] ); ?></textarea>
+			<p><textarea name="banhammer_options[redirect_url]" id="banhammer_options[redirect_url]" cols="60" rows="1"><?php echo esc_url( $options['redirect_url'] ); ?></textarea>
 			<br /><span class="description"><?php esc_html_e( 'Set redirect URL (example: http://example.com).', 'ban-hammer' ); ?></span></p>
 			<?php
 		}
@@ -385,15 +368,12 @@ class BanHammer {
 		$options = $this->get_options();
 		$keylist = $this->get_keylist();
 
-		// Hardcoding becuase it's always this.
-		$output['db_version'] = $this->db_version;
-
 		// Message
 		$output['message'] = ( $input['message'] !== $options['message'] ) ? wp_kses_post( $input['message'] ) : $options['message'];
 
 		// Redirect
 		$output['redirect']     = ( ! isset( $input['redirect'] ) || is_null( $input['redirect'] ) || '0' === $input['redirect'] ) ? 'no' : 'yes';
-		$output['redirect_url'] = ( $input['redirect_url'] !== $options['redirect_url'] ) ? esc_url( $input['redirect_url'] ) : $options['redirect_url'];
+		$output['redirect_url'] = ( isset( $input['redirect_url'] ) && $input['redirect_url'] !== $options['redirect_url'] ) ? sanitize_url( $input['redirect_url'] ) : $options['redirect_url'];
 
 		// Banned List (not saved in the Ban Hammer options)
 		if ( empty( $input['bannedlist'] ) ) {
