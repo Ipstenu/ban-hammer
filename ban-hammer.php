@@ -3,13 +3,13 @@
 Plugin Name: Ban Hammer
 Plugin URI: http://halfelf.org/plugins/ban-hammer/
 Description: Prevent people from registering with any email you list.
-Version: 3.1
+Version: 3.1.1
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 Network: true
 Text Domain: ban-hammer
 
-Copyright 2009-22 Mika Epstein (email: ipstenu@halfelf.org)
+Copyright 2009-23 Mika Epstein (email: ipstenu@halfelf.org)
 
 	This file is part of Ban Hammer, a plugin for WordPress.
 
@@ -51,13 +51,13 @@ class BanHammer {
 	 */
 	public function __construct() {
 
-		//allow this instance to be called from outside the class
+		// Allow this instance to be called from outside the class:
 		self::$instance = $this;
 
 		add_action( 'init', array( &$this, 'init' ) );
 		add_action( 'admin_init', array( &$this, 'admin_init' ) );
 
-		//add admin panel
+		// Add admin panel:
 		if ( is_multisite() ) {
 			add_action( 'network_admin_menu', array( &$this, 'network_admin_menu' ) );
 			add_action( 'current_screen', array( &$this, 'network_admin_screen' ) );
@@ -221,7 +221,7 @@ class BanHammer {
 				$output['message'] = ( $_POST['message'] !== $options['message'] ) ? wp_kses_post( $_POST['message'] ) : $options['message'];
 
 				// Redirect.
-				$output['redirect']     = ( ! isset( $_POST['redirect'] ) || is_null( $_POST['redirect'] ) || '0' === $_POST['redirect'] ) ? 'no' : 'yes';
+				$output['redirect']     = ( ! isset( $_POST['redirect'] ) || is_null( $_POST['redirect'] ) || '0' === $_POST['redirect'] || 'no' === $_POST['redirect'] ) ? 'no' : 'yes';
 				$output['redirect_url'] = ( $_POST['redirect_url'] !== $options['redirect_url'] ) ? sanitize_url( $_POST['redirect_url'] ) : $options['redirect_url'];
 
 				// Banned List.
