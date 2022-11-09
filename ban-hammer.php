@@ -157,28 +157,6 @@ class BanHammer {
 	}
 
 	/**
-	 * Upgrades Database
-	 *
-	 * @param int $current_db_version the current DB version
-	 * @since 2.6
-	 */
-	public function upgrade( $current_db_version ) {
-		if ( $current_db_version < 1 ) {
-
-			// Migrate old options to new
-			$this->options['redirect']     = $this->option_defaults['redirect'];
-			$this->options['redirect_url'] = $this->option_defaults['redirect_url'];
-			$this->options['message']      = get_option( 'banhammer_message', $this->option_defaults['message'] );
-			$this->options['db_version']   = '1';
-
-			// Delete old options
-			delete_site_option( 'banhammer_message' );
-		}
-
-		update_site_option( $this->option_name, $this->options );
-	}
-
-	/**
 	 * Admin Menu
 	 *
 	 * @since 2.5
@@ -210,12 +188,6 @@ class BanHammer {
 			if ( isset( $_POST['update'] ) && check_admin_referer( 'banhammer_networksave' ) ) {
 				$options = $this->options;
 				$keylist = $this->get_keylist();
-
-				// This is hardcoded for a reason.
-				$output['db_version'] = $this->db_version;
-
-				// Hardcoding because it's always this.
-				$output['db_version'] = $this->db_version;
 
 				// Message.
 				$output['message'] = ( $_POST['message'] !== $options['message'] ) ? wp_kses_post( $_POST['message'] ) : $options['message'];
