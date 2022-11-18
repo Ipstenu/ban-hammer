@@ -3,7 +3,7 @@ Contributors: Ipstenu
 Tags: email, ban, registration, buddypress, wpmu, multisite
 Requires at least: 5.5
 Tested up to: 6.1
-Stable tag: 3.1
+Stable tag: 3.1.2
 Donate Link: https://ko-fi.com/A236CEN/
 License: GPLv2
 
@@ -44,7 +44,7 @@ Many thanks are due to WP-Deadbolt, for making me think about SQL and TTC for St
 
 = 3.0 =
 * March 2021 by Ipstenu
-* Remove support for WP 5.4 and older (blacklist_keys no longer supported)
+* Remove support for WP 5.4 and older (`blacklist_keys` no longer supported)
 * Remove checks for if registration is active and filters for that
 
 == Installation ==
